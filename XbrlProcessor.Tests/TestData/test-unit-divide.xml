@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance"
+            xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+            xmlns:xbrli-pure="http://www.xbrl.org/2003/instance/pure">
+    <xbrli:unit id="RUB_PURE">
+        <xbrli:divide>
+            <xbrli:unitNumerator>
+                <xbrli:measure>iso4217:RUB</xbrli:measure>
+            </xbrli:unitNumerator>
+            <xbrli:unitDenominator>
+                <xbrli:measure>xbrli-pure:pure</xbrli:measure>
+            </xbrli:unitDenominator>
+        </xbrli:divide>
+    </xbrli:unit>
+</xbrli:xbrl>

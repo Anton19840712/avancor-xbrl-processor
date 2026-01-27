@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance"
+            xmlns:purcb-dic="http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic"
+            xmlns:iso4217="http://www.xbrl.org/2003/iso4217">
+    <xbrli:context id="C1">
+        <xbrli:entity>
+            <xbrli:identifier scheme="http://www.cbr.ru">1234567890</xbrli:identifier>
+        </xbrli:entity>
+        <xbrli:period>
+            <xbrli:instant>2019-04-30</xbrli:instant>
+        </xbrli:period>
+    </xbrli:context>
+    <xbrli:unit id="RUB">
+        <xbrli:measure>iso4217:RUB</xbrli:measure>
+    </xbrli:unit>
+    <purcb-dic:TestFact contextRef="C1" unitRef="RUB" decimals="2">1000000.50</purcb-dic:TestFact>
+</xbrli:xbrl>

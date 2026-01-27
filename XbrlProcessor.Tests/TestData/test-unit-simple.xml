@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance"
+            xmlns:iso4217="http://www.xbrl.org/2003/iso4217">
+    <xbrli:unit id="RUB">
+        <xbrli:measure>iso4217:RUB</xbrli:measure>
+    </xbrli:unit>
+</xbrli:xbrl>

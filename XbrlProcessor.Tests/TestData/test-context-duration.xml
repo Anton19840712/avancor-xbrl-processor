@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance">
+    <xbrli:context id="C2">
+        <xbrli:entity>
+            <xbrli:identifier scheme="http://www.cbr.ru">1234567890</xbrli:identifier>
+        </xbrli:entity>
+        <xbrli:period>
+            <xbrli:startDate>2019-01-01</xbrli:startDate>
+            <xbrli:endDate>2019-04-30</xbrli:endDate>
+        </xbrli:period>
+    </xbrli:context>
+</xbrli:xbrl>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance"
+            xmlns:xbrldi="http://xbrl.org/2006/xbrldi"
+            xmlns:dim-int="http://www.cbr.ru/xbrl/udr/dim/dim-int"
+            xmlns:purcb-dic="http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic">
+    <xbrli:context id="C3">
+        <xbrli:entity>
+            <xbrli:identifier scheme="http://www.cbr.ru">1234567890</xbrli:identifier>
+        </xbrli:entity>
+        <xbrli:period>
+            <xbrli:instant>2019-04-30</xbrli:instant>
+        </xbrli:period>
+        <xbrli:scenario>
+            <xbrldi:explicitMember dimension="dim-int:TestDimension">purcb-dic:TestMember</xbrldi:explicitMember>
+            <xbrldi:typedMember dimension="dim-int:ID_sobstv_CZBTaxis">
+                <dim-int:ID_sobstv_CZB>12345</dim-int:ID_sobstv_CZB>
+            </xbrldi:typedMember>
+        </xbrli:scenario>
+    </xbrli:context>
+</xbrli:xbrl>
