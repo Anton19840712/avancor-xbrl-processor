@@ -10,6 +10,8 @@ namespace XbrlProcessor.Services
     /// </summary>
     public class XbrlMerger
     {
+        #region Fields
+
         private readonly XNamespace _xbrli;
         private readonly XNamespace _xbrldi;
         private readonly XNamespace _link;
@@ -17,6 +19,10 @@ namespace XbrlProcessor.Services
         private readonly XNamespace _dimInt;
         private readonly XNamespace _purcbDic;
         private readonly XbrlSettings _settings;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Конструктор сервиса объединения XBRL
@@ -32,6 +38,10 @@ namespace XbrlProcessor.Services
             _dimInt = settings.XmlNamespaces.DimInt;
             _purcbDic = settings.XmlNamespaces.PurcbDic;
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Объединяет два отчета в один, удаляя дубликаты контекстов, единиц и фактов
@@ -121,6 +131,10 @@ namespace XbrlProcessor.Services
 
             doc.Save(filePath);
         }
+
+        #endregion
+
+        #region Create Methods
 
         private XElement CreateContextElement(Context context)
         {
@@ -242,6 +256,10 @@ namespace XbrlProcessor.Services
             return element;
         }
 
+        #endregion
+
+        #region Helper Methods
+
         private string GetContextSignature(Context context)
         {
             var parts = new List<string>
@@ -267,5 +285,7 @@ namespace XbrlProcessor.Services
         {
             return $"{unit.Measure}|{unit.Numerator}|{unit.Denominator}";
         }
+
+        #endregion
     }
 }

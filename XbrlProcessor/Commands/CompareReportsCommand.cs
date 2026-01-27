@@ -9,10 +9,16 @@ namespace XbrlProcessor.Commands
     /// </summary>
     public class CompareReportsCommand : IXbrlCommand
     {
+        #region Fields
+
         private readonly Instance _instance1;
         private readonly Instance _instance2;
         private readonly XbrlAnalyzer _analyzer;
         private readonly XbrlSettings _settings;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Конструктор команды сравнения отчетов
@@ -29,6 +35,10 @@ namespace XbrlProcessor.Commands
             _analyzer = analyzer;
             _settings = settings;
         }
+
+        #endregion
+
+        #region IXbrlCommand Implementation
 
         public void Execute()
         {
@@ -69,5 +79,7 @@ namespace XbrlProcessor.Commands
         public string GetName() => "CompareReports";
 
         public string GetDescription() => "Сравнение двух XBRL отчетов и выявление различий";
+
+        #endregion
     }
 }

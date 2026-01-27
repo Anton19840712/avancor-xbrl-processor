@@ -11,10 +11,16 @@ namespace XbrlProcessor.Services
     /// </summary>
     public class XbrlParser
     {
+        #region Fields
+
         private readonly XNamespace _xbrli;
         private readonly XNamespace _xbrldi;
         private readonly XNamespace _dimInt;
         private readonly XbrlSettings _settings;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Конструктор парсера XBRL
@@ -27,6 +33,10 @@ namespace XbrlProcessor.Services
             _xbrldi = settings.XmlNamespaces.Xbrldi;
             _dimInt = settings.XmlNamespaces.DimInt;
         }
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Парсит XBRL файл и возвращает объект Instance
@@ -61,6 +71,10 @@ namespace XbrlProcessor.Services
 
             return builder.Build();
         }
+
+        #endregion
+
+        #region Private Methods
 
         private Context ParseContext(XElement element)
         {
@@ -204,5 +218,7 @@ namespace XbrlProcessor.Services
 
             return fact;
         }
+
+        #endregion
     }
 }

@@ -8,11 +8,17 @@ namespace XbrlProcessor.Commands
     /// </summary>
     public class MergeReportsCommand : IXbrlCommand
     {
+        #region Fields
+
         private readonly Instance _instance1;
         private readonly Instance _instance2;
         private readonly XbrlMerger _merger;
         private readonly string _mergedPath;
         private readonly string _templatePath;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Конструктор команды объединения отчетов
@@ -32,6 +38,10 @@ namespace XbrlProcessor.Commands
             _templatePath = templatePath;
         }
 
+        #endregion
+
+        #region IXbrlCommand Implementation
+
         public void Execute()
         {
             Console.WriteLine("\n\n=== Задание 2: Объединение отчетов ===\n");
@@ -46,5 +56,7 @@ namespace XbrlProcessor.Commands
         public string GetName() => "MergeReports";
 
         public string GetDescription() => "Объединение двух XBRL отчетов с удалением дубликатов";
+
+        #endregion
     }
 }

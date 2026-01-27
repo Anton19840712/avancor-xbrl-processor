@@ -8,8 +8,14 @@ namespace XbrlProcessor.Commands
     /// </summary>
     public class ExecuteXPathQueriesCommand : IXbrlCommand
     {
+        #region Fields
+
         private readonly string _reportPath;
         private readonly XbrlSettings _settings;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Конструктор команды выполнения XPath запросов
@@ -21,6 +27,10 @@ namespace XbrlProcessor.Commands
             _reportPath = reportPath;
             _settings = settings;
         }
+
+        #endregion
+
+        #region IXbrlCommand Implementation
 
         public void Execute()
         {
@@ -36,5 +46,7 @@ namespace XbrlProcessor.Commands
         public string GetName() => "ExecuteXPathQueries";
 
         public string GetDescription() => "Выполнение XPath запросов к XBRL файлу";
+
+        #endregion
     }
 }

@@ -7,7 +7,13 @@ namespace XbrlProcessor.Builders
     /// </summary>
     public class InstanceBuilder
     {
+        #region Fields
+
         private readonly Instance _instance;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Конструктор билдера Instance
@@ -16,6 +22,10 @@ namespace XbrlProcessor.Builders
         {
             _instance = new Instance();
         }
+
+        #endregion
+
+        #region Context Methods
 
         /// <summary>
         /// Добавляет один контекст в Instance
@@ -42,6 +52,10 @@ namespace XbrlProcessor.Builders
             return this;
         }
 
+        #endregion
+
+        #region Unit Methods
+
         /// <summary>
         /// Добавляет одну единицу измерения в Instance
         /// </summary>
@@ -67,6 +81,10 @@ namespace XbrlProcessor.Builders
             return this;
         }
 
+        #endregion
+
+        #region Fact Methods
+
         /// <summary>
         /// Добавляет один факт в Instance
         /// </summary>
@@ -91,6 +109,10 @@ namespace XbrlProcessor.Builders
             }
             return this;
         }
+
+        #endregion
+
+        #region Clear Methods
 
         /// <summary>
         /// Очищает все контексты из Instance
@@ -122,6 +144,10 @@ namespace XbrlProcessor.Builders
             return this;
         }
 
+        #endregion
+
+        #region Build Methods
+
         /// <summary>
         /// Строит и возвращает готовый объект Instance
         /// </summary>
@@ -152,5 +178,7 @@ namespace XbrlProcessor.Builders
                 throw new InvalidOperationException("Facts collection cannot be null");
             }
         }
+
+        #endregion
     }
 }

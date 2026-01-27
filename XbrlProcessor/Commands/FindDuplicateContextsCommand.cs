@@ -8,9 +8,15 @@ namespace XbrlProcessor.Commands
     /// </summary>
     public class FindDuplicateContextsCommand : IXbrlCommand
     {
+        #region Fields
+
         private readonly Instance _instance1;
         private readonly Instance _instance2;
         private readonly XbrlAnalyzer _analyzer;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Конструктор команды поиска дубликатов
@@ -24,6 +30,10 @@ namespace XbrlProcessor.Commands
             _instance2 = instance2;
             _analyzer = analyzer;
         }
+
+        #endregion
+
+        #region IXbrlCommand Implementation
 
         public void Execute()
         {
@@ -61,5 +71,7 @@ namespace XbrlProcessor.Commands
         public string GetName() => "FindDuplicateContexts";
 
         public string GetDescription() => "Поиск дубликатов контекстов в двух XBRL отчетах";
+
+        #endregion
     }
 }
