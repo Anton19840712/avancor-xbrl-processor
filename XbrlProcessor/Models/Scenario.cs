@@ -87,8 +87,4 @@ namespace Models.XBRL
 
     }
 
-    public class Scenarios : Collection<Scenario>
-    {
-    }
-
 }

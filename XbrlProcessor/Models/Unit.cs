@@ -75,8 +75,4 @@ namespace Models.XBRL
 
     }
 
-    public class Units : Collection<Unit>
-    {
-    }
-
 }
