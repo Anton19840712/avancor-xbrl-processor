@@ -96,18 +96,4 @@ namespace XbrlProcessor.Services
             return $"{fact.Id}|{fact.ContextRef}";
         }
     }
-
-    public class ComparisonResult
-    {
-        public List<Fact> MissingFacts { get; set; } = new();
-        public List<Fact> NewFacts { get; set; } = new();
-        public List<FactDifference> ModifiedFacts { get; set; } = new();
-    }
-
-    public class FactDifference
-    {
-        public string FactKey { get; set; }
-        public Fact Fact1 { get; set; }
-        public Fact Fact2 { get; set; }
-    }
 }
