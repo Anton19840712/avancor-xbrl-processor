@@ -1,7 +1,8 @@
 using System.Xml.Linq;
-using Models.XBRL;
+using XbrlProcessor.Models.Entities;
+using XbrlProcessor.Models.Collections;
 
-namespace XbrlProcessor
+namespace XbrlProcessor.Services
 {
     public class XbrlParser
     {

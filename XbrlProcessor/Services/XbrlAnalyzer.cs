@@ -1,6 +1,6 @@
-using Models.XBRL;
+using XbrlProcessor.Models.Entities;
 
-namespace XbrlProcessor
+namespace XbrlProcessor.Services
 {
     public class XbrlAnalyzer
     {

@@ -1,7 +1,7 @@
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace XbrlProcessor
+namespace XbrlProcessor.Services
 {
     public class XPathQueries
     {

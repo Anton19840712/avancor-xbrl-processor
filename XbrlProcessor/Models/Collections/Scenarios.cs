@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
+using XbrlProcessor.Models.Entities;
 
-namespace Models.XBRL
+namespace XbrlProcessor.Models.Collections
 {
     public class Scenarios : Collection<Scenario>
     {

@@ -1,6 +1,4 @@
-using System.Collections.ObjectModel;
-
-namespace Models.XBRL
+namespace XbrlProcessor.Models.Entities
 {
 
     /* XBRL definition

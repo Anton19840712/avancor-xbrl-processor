@@ -1,6 +1,6 @@
-using System.Collections.ObjectModel;
+using XbrlProcessor.Models.Collections;
 
-namespace Models.XBRL
+namespace XbrlProcessor.Models.Entities
 {
     /// <summary>
     /// Модель записи инстанса (файла отчета)

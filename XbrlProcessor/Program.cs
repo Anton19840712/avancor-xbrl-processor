@@ -1,4 +1,4 @@
-using XbrlProcessor;
+using XbrlProcessor.Services;
 
 Console.WriteLine("=== XBRL Processor - Тестовое задание ===\n");
 
