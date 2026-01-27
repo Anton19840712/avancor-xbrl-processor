@@ -21,6 +21,7 @@ bld/
 
 # Visual Studio cache/options directory
 .vs/
+**/.vs/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -119,4 +120,4 @@ ehthumbs.db
 Thumbs.db
 
 # Generated XBRL files
-merged_report.xbrl
+**/Reports/merged_report.xbrl

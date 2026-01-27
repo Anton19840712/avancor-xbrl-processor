@@ -7,9 +7,9 @@ var analyzer = new XbrlAnalyzer();
 var merger = new XbrlMerger();
 
 // Пути к файлам
-var report1Path = "report1.xbrl";
-var report2Path = "report2.xbrl";
-var mergedPath = "merged_report.xbrl";
+var report1Path = "Reports/report1.xbrl";
+var report2Path = "Reports/report2.xbrl";
+var mergedPath = "Reports/merged_report.xbrl";
 
 // Загружаем отчеты
 Console.WriteLine("Загрузка отчетов...");
