@@ -2,27 +2,16 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using XbrlProcessor.Configuration;
 
-namespace XbrlProcessor.Services
-{
-    /// <summary>
-    /// Сервис для выполнения XPath запросов к XBRL файлам
-    /// </summary>
-    public class XPathQueries
-    {
-        private readonly XNamespace _xbrli;
-        private readonly XNamespace _xbrldi;
-        private readonly XbrlSettings _settings;
+namespace XbrlProcessor.Services;
 
-        /// <summary>
-        /// Конструктор сервиса XPath запросов
-        /// </summary>
-        /// <param name="settings">Настройки приложения</param>
-        public XPathQueries(XbrlSettings settings)
-        {
-            _settings = settings;
-            _xbrli = settings.XmlNamespaces.Xbrli;
-            _xbrldi = settings.XmlNamespaces.Xbrldi;
-        }
+/// <summary>
+/// Сервис для выполнения XPath запросов к XBRL файлам
+/// </summary>
+/// <param name="settings">Настройки приложения</param>
+public class XPathQueries(XbrlSettings settings)
+{
+    private readonly XNamespace _xbrli = settings.XmlNamespaces.Xbrli;
+    private readonly XNamespace _xbrldi = settings.XmlNamespaces.Xbrldi;
 
         /// <summary>
         /// Выполняет все настроенные XPath запросы к XBRL файлу
@@ -37,15 +26,15 @@ namespace XbrlProcessor.Services
             var manager = new System.Xml.XmlNamespaceManager(navigator.NameTable);
             manager.AddNamespace("xbrli", _xbrli.NamespaceName);
             manager.AddNamespace("xbrldi", _xbrldi.NamespaceName);
-            manager.AddNamespace("dim-int", _settings.XmlNamespaces.DimInt);
+            manager.AddNamespace("dim-int", settings.XmlNamespaces.DimInt);
 
             Console.WriteLine("\n=== XPath Запросы ===\n");
 
             // 1. Контексты с периодом instant = "2019-04-30"
             Console.WriteLine("1. Контексты с периодом instant = \"2019-04-30\":");
-            Console.WriteLine($"XPath: {_settings.XPathQueries.ContextsWithInstant}");
+            Console.WriteLine($"XPath: {settings.XPathQueries.ContextsWithInstant}");
 
-            var results1 = navigator.Select(_settings.XPathQueries.ContextsWithInstant, manager);
+            var results1 = navigator.Select(settings.XPathQueries.ContextsWithInstant, manager);
 
             int count1 = 0;
             foreach (XPathNavigator result in results1)
@@ -57,9 +46,9 @@ namespace XbrlProcessor.Services
 
             // 2. Контексты со сценарием dimension="dim-int:ID_sobstv_CZBTaxis"
             Console.WriteLine("2. Контексты со сценарием dimension=\"dim-int:ID_sobstv_CZBTaxis\":");
-            Console.WriteLine($"XPath: {_settings.XPathQueries.ContextsWithDimension}");
+            Console.WriteLine($"XPath: {settings.XPathQueries.ContextsWithDimension}");
 
-            var results2 = navigator.Select(_settings.XPathQueries.ContextsWithDimension, manager);
+            var results2 = navigator.Select(settings.XPathQueries.ContextsWithDimension, manager);
 
             int count2 = 0;
             foreach (XPathNavigator result in results2)
@@ -71,9 +60,9 @@ namespace XbrlProcessor.Services
 
             // 3. Контексты без сценария
             Console.WriteLine("3. Контексты без сценария:");
-            Console.WriteLine($"XPath: {_settings.XPathQueries.ContextsWithoutScenario}");
+            Console.WriteLine($"XPath: {settings.XPathQueries.ContextsWithoutScenario}");
 
-            var results3 = navigator.Select(_settings.XPathQueries.ContextsWithoutScenario, manager);
+            var results3 = navigator.Select(settings.XPathQueries.ContextsWithoutScenario, manager);
 
             int count3 = 0;
             foreach (XPathNavigator result in results3)
@@ -92,16 +81,15 @@ namespace XbrlProcessor.Services
             Console.WriteLine("\n=== Список XPath запросов ===\n");
 
             Console.WriteLine("1. Контексты с периодом instant = \"2019-04-30\":");
-            Console.WriteLine($"   {_settings.XPathQueries.ContextsWithInstant}");
+            Console.WriteLine($"   {settings.XPathQueries.ContextsWithInstant}");
             Console.WriteLine();
 
             Console.WriteLine("2. Контексты со сценарием dimension=\"dim-int:ID_sobstv_CZBTaxis\":");
-            Console.WriteLine($"   {_settings.XPathQueries.ContextsWithDimension}");
+            Console.WriteLine($"   {settings.XPathQueries.ContextsWithDimension}");
             Console.WriteLine();
 
             Console.WriteLine("3. Контексты без сценария:");
-            Console.WriteLine($"   {_settings.XPathQueries.ContextsWithoutScenario}");
+            Console.WriteLine($"   {settings.XPathQueries.ContextsWithoutScenario}");
             Console.WriteLine();
         }
     }
-}

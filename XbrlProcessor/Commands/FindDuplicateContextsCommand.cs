@@ -1,37 +1,16 @@
 using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Services;
 
-namespace XbrlProcessor.Commands
+namespace XbrlProcessor.Commands;
+
+/// <summary>
+/// Команда для поиска дубликатов контекстов в XBRL отчетах
+/// </summary>
+/// <param name="instance1">Первый отчет</param>
+/// <param name="instance2">Второй отчет</param>
+/// <param name="analyzer">Сервис анализа XBRL</param>
+public class FindDuplicateContextsCommand(Instance instance1, Instance instance2, XbrlAnalyzer analyzer) : IXbrlCommand
 {
-    /// <summary>
-    /// Команда для поиска дубликатов контекстов в XBRL отчетах
-    /// </summary>
-    public class FindDuplicateContextsCommand : IXbrlCommand
-    {
-        #region Fields
-
-        private readonly Instance _instance1;
-        private readonly Instance _instance2;
-        private readonly XbrlAnalyzer _analyzer;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Конструктор команды поиска дубликатов
-        /// </summary>
-        /// <param name="instance1">Первый отчет</param>
-        /// <param name="instance2">Второй отчет</param>
-        /// <param name="analyzer">Сервис анализа XBRL</param>
-        public FindDuplicateContextsCommand(Instance instance1, Instance instance2, XbrlAnalyzer analyzer)
-        {
-            _instance1 = instance1;
-            _instance2 = instance2;
-            _analyzer = analyzer;
-        }
-
-        #endregion
 
         #region IXbrlCommand Implementation
 
@@ -40,7 +19,7 @@ namespace XbrlProcessor.Commands
             Console.WriteLine("=== Задание 1: Поиск дубликатов контекстов ===\n");
 
             Console.WriteLine("Report1:");
-            var duplicates1 = _analyzer.FindDuplicateContexts(_instance1);
+            var duplicates1 = analyzer.FindDuplicateContexts(instance1);
             if (duplicates1.Count > 0)
             {
                 foreach (var group in duplicates1)
@@ -54,7 +33,7 @@ namespace XbrlProcessor.Commands
             }
 
             Console.WriteLine("\nReport2:");
-            var duplicates2 = _analyzer.FindDuplicateContexts(_instance2);
+            var duplicates2 = analyzer.FindDuplicateContexts(instance2);
             if (duplicates2.Count > 0)
             {
                 foreach (var group in duplicates2)
@@ -74,4 +53,3 @@ namespace XbrlProcessor.Commands
 
         #endregion
     }
-}

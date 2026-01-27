@@ -1,17 +1,16 @@
-namespace XbrlProcessor.Models.Entities
-{
+namespace XbrlProcessor.Models.Entities;
 
-    /* XBRL definition
-     * namespace: http://www.xbrl.org/2003/instance
-     * file path: www.xbrl.org\2003\xbrl-instance-2003-12-31.xsd
-     
-    */
+/* XBRL definition
+ * namespace: http://www.xbrl.org/2003/instance
+ * file path: www.xbrl.org\2003\xbrl-instance-2003-12-31.xsd
 
-    public class Fact
+*/
+
+public class Fact
     {
         /// <summary>Идентификатор фактов (значений отчета)</summary>
         /// <see>xbrli:unit/[@id]</see>
-        public string? Id { get; set; }
+        public required string? Id { get; set; }
 
         /// <summary>Ссылка на контекст</summary>
         /// <see>xbrli:unit/[@contextRef]</see>
@@ -40,5 +39,3 @@ namespace XbrlProcessor.Models.Entities
         public virtual string? Value { get; set; }
 
     }
-
-}

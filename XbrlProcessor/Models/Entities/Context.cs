@@ -1,11 +1,11 @@
 using System.Collections.ObjectModel;
 using XbrlProcessor.Models.Collections;
 
-namespace XbrlProcessor.Models.Entities
-{
-    /// <summary>
-    /// Модель записи контекста
-    /// </summary>
+namespace XbrlProcessor.Models.Entities;
+
+/// <summary>
+/// Модель записи контекста
+/// </summary>
 
     /* XBRL definition
      * namespace: http://www.xbrl.org/2003/instance
@@ -97,7 +97,7 @@ namespace XbrlProcessor.Models.Entities
 
     {
 
-        public string? Id { get; set; }
+        public required string? Id { get; set; }
 
         /// <summary>Значение контекста</summary>
         /// <value>Строковое значение, максимальная длина 200, обязательное</value>
@@ -139,5 +139,3 @@ namespace XbrlProcessor.Models.Entities
         public virtual Scenarios Scenarios { get; set; } = new Scenarios();
 
     }
-
-}

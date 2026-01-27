@@ -1,9 +1,9 @@
-namespace XbrlProcessor.Configuration
-{
-    /// <summary>
-    /// Настройки приложения для обработки XBRL файлов
-    /// </summary>
-    public class XbrlSettings
+namespace XbrlProcessor.Configuration;
+
+/// <summary>
+/// Настройки приложения для обработки XBRL файлов
+/// </summary>
+public class XbrlSettings
     {
         /// <summary>
         /// Путь к папке с отчетами
@@ -72,57 +72,56 @@ namespace XbrlProcessor.Configuration
     /// <summary>
     /// Настройки XML пространств имен для XBRL
     /// </summary>
-    public class XmlNamespacesSettings
+    public record XmlNamespacesSettings
     {
         /// <summary>
         /// Пространство имен XBRL Instance
         /// </summary>
-        public string Xbrli { get; set; } = "http://www.xbrl.org/2003/instance";
+        public string Xbrli { get; init; } = "http://www.xbrl.org/2003/instance";
 
         /// <summary>
         /// Пространство имен XBRL Dimensions
         /// </summary>
-        public string Xbrldi { get; set; } = "http://xbrl.org/2006/xbrldi";
+        public string Xbrldi { get; init; } = "http://xbrl.org/2006/xbrldi";
 
         /// <summary>
         /// Пространство имен XBRL Linkbase
         /// </summary>
-        public string Link { get; set; } = "http://www.xbrl.org/2003/linkbase";
+        public string Link { get; init; } = "http://www.xbrl.org/2003/linkbase";
 
         /// <summary>
         /// Пространство имен XLink
         /// </summary>
-        public string Xlink { get; set; } = "http://www.w3.org/1999/xlink";
+        public string Xlink { get; init; } = "http://www.w3.org/1999/xlink";
 
         /// <summary>
         /// Пространство имен измерений ЦБ РФ
         /// </summary>
-        public string DimInt { get; set; } = "http://www.cbr.ru/xbrl/udr/dim/dim-int";
+        public string DimInt { get; init; } = "http://www.cbr.ru/xbrl/udr/dim/dim-int";
 
         /// <summary>
         /// Пространство имен словаря показателей ЦБ РФ
         /// </summary>
-        public string PurcbDic { get; set; } = "http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic";
+        public string PurcbDic { get; init; } = "http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic";
     }
 
     /// <summary>
     /// Настройки XPath запросов для поиска контекстов
     /// </summary>
-    public class XPathQueriesSettings
+    public record XPathQueriesSettings
     {
         /// <summary>
         /// XPath запрос для поиска контекстов с периодом instant = "2019-04-30"
         /// </summary>
-        public string ContextsWithInstant { get; set; } = "//xbrli:context[xbrli:period/xbrli:instant='2019-04-30']/@id";
+        public string ContextsWithInstant { get; init; } = "//xbrli:context[xbrli:period/xbrli:instant='2019-04-30']/@id";
 
         /// <summary>
         /// XPath запрос для поиска контекстов со сценарием dimension="dim-int:ID_sobstv_CZBTaxis"
         /// </summary>
-        public string ContextsWithDimension { get; set; } = "//xbrli:context[xbrli:scenario/xbrldi:typedMember[@dimension='dim-int:ID_sobstv_CZBTaxis']]/@id";
+        public string ContextsWithDimension { get; init; } = "//xbrli:context[xbrli:scenario/xbrldi:typedMember[@dimension='dim-int:ID_sobstv_CZBTaxis']]/@id";
 
         /// <summary>
         /// XPath запрос для поиска контекстов без сценария
         /// </summary>
-        public string ContextsWithoutScenario { get; set; } = "//xbrli:context[not(xbrli:scenario)]/@id";
+        public string ContextsWithoutScenario { get; init; } = "//xbrli:context[not(xbrli:scenario)]/@id";
     }
-}

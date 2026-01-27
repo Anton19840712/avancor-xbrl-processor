@@ -1,9 +1,8 @@
-namespace XbrlProcessor.Models.Entities
-{
+namespace XbrlProcessor.Models.Entities;
 
-    /// <summary>
-    /// Модель записи сценария контекста
-    /// </summary>
+/// <summary>
+/// Модель записи сценария контекста
+/// </summary>
     
     /* XBRL definition
      
@@ -59,30 +58,31 @@ namespace XbrlProcessor.Models.Entities
 
     */
 
-    public class Scenario
+    /// <summary>Модель записи сценария контекста</summary>
+    /// <param name="DimensionType">Тип измерерия XBRL</param>
+    /// <param name="DimensionName">Наименование измерерия XBRL</param>
+    /// <param name="DimensionCode">Код измерерия XBRL</param>
+    /// <param name="DimensionValue">Значение измерерия XBRL (dimension)</param>
+    public record Scenario
     {
-
         /// <summary>Тип измерерия XBRL</summary>
         /// <value>Строкое значение, максимальная длина 200, обязательное</value>
         /// <see>xbrli:context/xbrli:scenario/(*)[name]: explicitMember, typedMember</see>
-        public virtual string? DimensionType { get; set; }
+        public string? DimensionType { get; init; }
 
         /// <summary>Наименование измерерия XBRL</summary>
         /// <value>Строкое значение, максимальная длина 200, необязательное</value>
         /// <see>xbrli:context/xbrli:scenario/(*)/[@dimension]</see>
-        public virtual string? DimensionName { get; set; }
+        public string? DimensionName { get; init; }
 
         /// <summary>Код измерерия XBRL</summary>
         /// <value>Строкое значение, максимальная длина 500, необязательное</value>
         /// <see>xbrli:context/xbrli:scenario/xbrldi:typedMember/(*)[name]</see>
-        public virtual string? DimensionCode { get; set; }
+        public string? DimensionCode { get; init; }
 
         /// <summary>Значение измерерия XBRL (dimension)</summary>
         /// <value>Строкое значение, максимальная длина 500, обязательное, индексируемое</value>
         /// <see>xbrli:context/xbrli:scenario/xbrldi:explicitMember</see>
         /// <see>xbrli:context/xbrli:scenario/xbrldi:typedMember/(*)</see>
-        public virtual string? DimensionValue { get; set; }
-
+        public string? DimensionValue { get; init; }
     }
-
-}

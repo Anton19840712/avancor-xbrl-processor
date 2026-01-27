@@ -1,23 +1,14 @@
 using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Configuration;
 
-namespace XbrlProcessor.Services
-{
-    /// <summary>
-    /// Сервис для анализа XBRL данных
-    /// </summary>
-    public class XbrlAnalyzer
-    {
-        private readonly XbrlSettings _settings;
+namespace XbrlProcessor.Services;
 
-        /// <summary>
-        /// Конструктор анализатора XBRL
-        /// </summary>
-        /// <param name="settings">Настройки приложения</param>
-        public XbrlAnalyzer(XbrlSettings settings)
-        {
-            _settings = settings;
-        }
+/// <summary>
+/// Сервис для анализа XBRL данных
+/// </summary>
+/// <param name="settings">Настройки приложения</param>
+public class XbrlAnalyzer(XbrlSettings settings)
+{
 
         /// <summary>
         /// Находит дубликаты контекстов в отчете
@@ -29,12 +20,11 @@ namespace XbrlProcessor.Services
             var duplicates = new List<List<Context>>();
             var groups = instance.Contexts
                 .GroupBy(c => GetContextSignature(c))
-                .Where(g => g.Count() > 1)
-                .ToList();
+                .Where(g => g.Count() > 1);
 
             foreach (var group in groups)
             {
-                duplicates.Add(group.ToList());
+                duplicates.Add([..group]);
             }
 
             return duplicates;
@@ -48,9 +38,9 @@ namespace XbrlProcessor.Services
                 context.EntityValue ?? "",
                 context.EntityScheme ?? "",
                 context.EntitySegment ?? "",
-                context.PeriodInstant?.ToString(_settings.DateFormat) ?? "",
-                context.PeriodStartDate?.ToString(_settings.DateFormat) ?? "",
-                context.PeriodEndDate?.ToString(_settings.DateFormat) ?? "",
+                context.PeriodInstant?.ToString(settings.DateFormat) ?? "",
+                context.PeriodStartDate?.ToString(settings.DateFormat) ?? "",
+                context.PeriodEndDate?.ToString(settings.DateFormat) ?? "",
                 context.PeriodForever.ToString()
             };
 
@@ -60,7 +50,7 @@ namespace XbrlProcessor.Services
                 parts.Add($"{scenario.DimensionType}|{scenario.DimensionName}|{scenario.DimensionCode}|{scenario.DimensionValue}");
             }
 
-            return string.Join(_settings.ContextSignatureSeparator, parts);
+            return string.Join(settings.ContextSignatureSeparator, parts);
         }
 
         /// <summary>
@@ -120,4 +110,3 @@ namespace XbrlProcessor.Services
             return $"{fact.Id}|{fact.ContextRef}";
         }
     }
-}

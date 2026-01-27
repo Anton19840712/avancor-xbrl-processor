@@ -1,11 +1,11 @@
-namespace XbrlProcessor.Commands
-{
-    /// <summary>
-    /// Инвокер для управления и выполнения команд
-    /// </summary>
-    public class CommandInvoker
+namespace XbrlProcessor.Commands;
+
+/// <summary>
+/// Инвокер для управления и выполнения команд
+/// </summary>
+public class CommandInvoker
     {
-        private readonly List<IXbrlCommand> _commands = new();
+        private readonly List<IXbrlCommand> _commands = [];
 
         /// <summary>
         /// Добавляет команду в очередь выполнения
@@ -61,4 +61,3 @@ namespace XbrlProcessor.Commands
         /// </summary>
         public IReadOnlyList<IXbrlCommand> GetCommands() => _commands.AsReadOnly();
     }
-}

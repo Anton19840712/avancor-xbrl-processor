@@ -1,9 +1,9 @@
-namespace XbrlProcessor.Commands
-{
-    /// <summary>
-    /// Интерфейс команды для выполнения операций над XBRL данными
-    /// </summary>
-    public interface IXbrlCommand
+namespace XbrlProcessor.Commands;
+
+/// <summary>
+/// Интерфейс команды для выполнения операций над XBRL данными
+/// </summary>
+public interface IXbrlCommand
     {
         /// <summary>
         /// Выполняет команду
@@ -20,4 +20,3 @@ namespace XbrlProcessor.Commands
         /// </summary>
         string GetDescription();
     }
-}

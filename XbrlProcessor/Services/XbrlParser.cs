@@ -4,37 +4,21 @@ using XbrlProcessor.Models.Collections;
 using XbrlProcessor.Configuration;
 using XbrlProcessor.Builders;
 
-namespace XbrlProcessor.Services
+namespace XbrlProcessor.Services;
+
+/// <summary>
+/// Сервис для парсинга XBRL файлов
+/// </summary>
+/// <param name="settings">Настройки приложения</param>
+public class XbrlParser(XbrlSettings settings)
 {
-    /// <summary>
-    /// Сервис для парсинга XBRL файлов
-    /// </summary>
-    public class XbrlParser
-    {
-        #region Fields
+    #region Fields
 
-        private readonly XNamespace _xbrli;
-        private readonly XNamespace _xbrldi;
-        private readonly XNamespace _dimInt;
-        private readonly XbrlSettings _settings;
+    private readonly XNamespace _xbrli = settings.XmlNamespaces.Xbrli;
+    private readonly XNamespace _xbrldi = settings.XmlNamespaces.Xbrldi;
+    private readonly XNamespace _dimInt = settings.XmlNamespaces.DimInt;
 
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Конструктор парсера XBRL
-        /// </summary>
-        /// <param name="settings">Настройки приложения</param>
-        public XbrlParser(XbrlSettings settings)
-        {
-            _settings = settings;
-            _xbrli = settings.XmlNamespaces.Xbrli;
-            _xbrldi = settings.XmlNamespaces.Xbrldi;
-            _dimInt = settings.XmlNamespaces.DimInt;
-        }
-
-        #endregion
+    #endregion
 
         #region Public Methods
 
@@ -49,25 +33,19 @@ namespace XbrlProcessor.Services
             var builder = new InstanceBuilder();
 
             // Парсинг контекстов
-            var contexts = doc.Descendants(_xbrli + "context")
-                .Select(ParseContext)
-                .ToList();
-            builder.AddContexts(contexts);
+            builder.AddContexts(doc.Descendants(_xbrli + "context")
+                .Select(ParseContext));
 
             // Парсинг единиц измерения
-            var units = doc.Descendants(_xbrli + "unit")
-                .Select(ParseUnit)
-                .ToList();
-            builder.AddUnits(units);
+            builder.AddUnits(doc.Descendants(_xbrli + "unit")
+                .Select(ParseUnit));
 
             // Парсинг фактов
-            var facts = doc.Root!.Elements()
+            builder.AddFacts(doc.Root!.Elements()
                 .Where(e => e.Name.Namespace != _xbrli &&
                            e.Name.LocalName != "schemaRef" &&
                            e.Attribute("contextRef") != null)
-                .Select(ParseFact)
-                .ToList();
-            builder.AddFacts(facts);
+                .Select(ParseFact));
 
             return builder.Build();
         }
@@ -139,59 +117,70 @@ namespace XbrlProcessor.Services
 
         private Scenario ParseScenario(XElement element)
         {
-            var scenario = new Scenario
-            {
-                DimensionType = element.Name.LocalName,
-                DimensionName = element.Attribute("dimension")?.Value
-            };
+            var dimensionType = element.Name.LocalName;
+            var dimensionName = element.Attribute("dimension")?.Value;
+            string? dimensionCode = null;
+            string? dimensionValue = null;
 
-            if (element.Name.LocalName == "explicitMember")
+            if (dimensionType == "explicitMember")
             {
-                scenario.DimensionValue = element.Value;
+                dimensionValue = element.Value;
             }
-            else if (element.Name.LocalName == "typedMember")
+            else if (dimensionType == "typedMember")
             {
                 var child = element.Elements().FirstOrDefault();
                 if (child != null)
                 {
-                    scenario.DimensionCode = child.Name.LocalName;
-                    scenario.DimensionValue = child.Value;
+                    dimensionCode = child.Name.LocalName;
+                    dimensionValue = child.Value;
                 }
             }
 
-            return scenario;
+            return new Scenario
+            {
+                DimensionType = dimensionType,
+                DimensionName = dimensionName,
+                DimensionCode = dimensionCode,
+                DimensionValue = dimensionValue
+            };
         }
 
         private Unit ParseUnit(XElement element)
         {
-            var unit = new Unit
-            {
-                Id = element.Attribute("id")?.Value
-            };
+            var id = element.Attribute("id")?.Value;
+            string? measure = null;
+            string? numerator = null;
+            string? denominator = null;
 
-            var measure = element.Element(_xbrli + "measure");
-            if (measure != null)
+            var measureElement = element.Element(_xbrli + "measure");
+            if (measureElement != null)
             {
-                unit.Measure = measure.Value;
+                measure = measureElement.Value;
             }
 
             var divide = element.Element(_xbrli + "divide");
             if (divide != null)
             {
-                var numerator = divide.Element(_xbrli + "unitNumerator")?.Element(_xbrli + "measure");
-                if (numerator != null)
+                var numeratorElement = divide.Element(_xbrli + "unitNumerator")?.Element(_xbrli + "measure");
+                if (numeratorElement != null)
                 {
-                    unit.Numerator = numerator.Value;
+                    numerator = numeratorElement.Value;
                 }
 
-                var denominator = divide.Element(_xbrli + "unitDenominator")?.Element(_xbrli + "measure");
-                if (denominator != null)
+                var denominatorElement = divide.Element(_xbrli + "unitDenominator")?.Element(_xbrli + "measure");
+                if (denominatorElement != null)
                 {
-                    unit.Denominator = denominator.Value;
+                    denominator = denominatorElement.Value;
                 }
             }
 
-            return unit;
+            return new Unit
+            {
+                Id = id,
+                Measure = measure,
+                Numerator = numerator,
+                Denominator = denominator
+            };
         }
 
         private Fact ParseFact(XElement element)
@@ -221,4 +210,3 @@ namespace XbrlProcessor.Services
 
         #endregion
     }
-}

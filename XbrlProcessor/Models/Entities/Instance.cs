@@ -1,13 +1,13 @@
 using XbrlProcessor.Models.Collections;
 
-namespace XbrlProcessor.Models.Entities
-{
-    /// <summary>
-    /// Модель записи инстанса (файла отчета)
-    /// </summary>
-    /// <remarks>Таблица ReportInstances</remarks>
+namespace XbrlProcessor.Models.Entities;
 
-    public class Instance
+/// <summary>
+/// Модель записи инстанса (файла отчета)
+/// </summary>
+/// <remarks>Таблица ReportInstances</remarks>
+
+public class Instance
     {
 
         /// <summary>Коллекция контекстов (context)</summary>
@@ -22,5 +22,3 @@ namespace XbrlProcessor.Models.Entities
         public virtual Facts Facts { get; set; } = new Facts();
 
     }
-
-}

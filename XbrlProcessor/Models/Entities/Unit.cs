@@ -1,9 +1,8 @@
-namespace XbrlProcessor.Models.Entities
-{
+namespace XbrlProcessor.Models.Entities;
 
-    /// <summary>
-    /// Модель класса Unit
-    /// </summary>
+/// <summary>
+/// Модель класса Unit
+/// </summary>
     /// <remarks>
     /// Определение XSD-схемы в XBRL
     /// namespace: http://www.xbrl.org/2003/instance
@@ -53,24 +52,27 @@ namespace XbrlProcessor.Models.Entities
     ///
     /// </remarks>
 
-    public class Unit
+    /// <summary>Модель класса Unit</summary>
+    /// <param name="Id">Идентификатор единицы измерения</param>
+    /// <param name="Measure">Параметр Measure (значение XBRL)</param>
+    /// <param name="Numerator">Параметр Numerator (значение XBRL)</param>
+    /// <param name="Denominator">Параметр unitDenominator (значение XBRL)</param>
+    public record Unit
     {
-        public string? Id { get; set; }
+        public required string? Id { get; init; }
+
         /// <summary>Парметр Measure (значение XBRL)</summary>
         /// <value>Строковое значение, максимальная длина 200, обязательое</value>
         /// <see>xbrli:unit/xbrli:measure</see>
-        public virtual string? Measure { get; set; }
+        public string? Measure { get; init; }
 
         /// <summary>Парметр Numerator (значение XBRL)</summary>
         /// <value>Строковое значение, максимальная длина 200, необязательое</value>
         /// <see>xbrli:unit/xbrli:unitNumerator</see>
-        public virtual string? Numerator { get; set; }
+        public string? Numerator { get; init; }
 
         /// <summary>Парметр unitDenominator (значение XBRL)</summary>
         /// <value>Строковое значение, максимальная длина 200, необязательое</value>
         /// <see>xbrli:unit/xbrli:unitDenominator</see>
-        public virtual string? Denominator { get; set; }
-
+        public string? Denominator { get; init; }
     }
-
-}

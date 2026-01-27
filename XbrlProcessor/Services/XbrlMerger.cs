@@ -3,43 +3,24 @@ using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Configuration;
 using XbrlProcessor.Builders;
 
-namespace XbrlProcessor.Services
+namespace XbrlProcessor.Services;
+
+/// <summary>
+/// Сервис для объединения XBRL отчетов
+/// </summary>
+/// <param name="settings">Настройки приложения</param>
+public class XbrlMerger(XbrlSettings settings)
 {
-    /// <summary>
-    /// Сервис для объединения XBRL отчетов
-    /// </summary>
-    public class XbrlMerger
-    {
-        #region Fields
+    #region Fields
 
-        private readonly XNamespace _xbrli;
-        private readonly XNamespace _xbrldi;
-        private readonly XNamespace _link;
-        private readonly XNamespace _xlink;
-        private readonly XNamespace _dimInt;
-        private readonly XNamespace _purcbDic;
-        private readonly XbrlSettings _settings;
+    private readonly XNamespace _xbrli = settings.XmlNamespaces.Xbrli;
+    private readonly XNamespace _xbrldi = settings.XmlNamespaces.Xbrldi;
+    private readonly XNamespace _link = settings.XmlNamespaces.Link;
+    private readonly XNamespace _xlink = settings.XmlNamespaces.Xlink;
+    private readonly XNamespace _dimInt = settings.XmlNamespaces.DimInt;
+    private readonly XNamespace _purcbDic = settings.XmlNamespaces.PurcbDic;
 
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Конструктор сервиса объединения XBRL
-        /// </summary>
-        /// <param name="settings">Настройки приложения</param>
-        public XbrlMerger(XbrlSettings settings)
-        {
-            _settings = settings;
-            _xbrli = settings.XmlNamespaces.Xbrli;
-            _xbrldi = settings.XmlNamespaces.Xbrldi;
-            _link = settings.XmlNamespaces.Link;
-            _xlink = settings.XmlNamespaces.Xlink;
-            _dimInt = settings.XmlNamespaces.DimInt;
-            _purcbDic = settings.XmlNamespaces.PurcbDic;
-        }
-
-        #endregion
+    #endregion
 
         #region Public Methods
 
@@ -154,14 +135,14 @@ namespace XbrlProcessor.Services
             if (context.PeriodInstant.HasValue)
             {
                 periodElement.Add(new XElement(_xbrli + "instant",
-                    context.PeriodInstant.Value.ToString(_settings.DateFormat)));
+                    context.PeriodInstant.Value.ToString(settings.DateFormat)));
             }
             else if (context.PeriodStartDate.HasValue && context.PeriodEndDate.HasValue)
             {
                 periodElement.Add(new XElement(_xbrli + "startDate",
-                    context.PeriodStartDate.Value.ToString(_settings.DateFormat)));
+                    context.PeriodStartDate.Value.ToString(settings.DateFormat)));
                 periodElement.Add(new XElement(_xbrli + "endDate",
-                    context.PeriodEndDate.Value.ToString(_settings.DateFormat)));
+                    context.PeriodEndDate.Value.ToString(settings.DateFormat)));
             }
             else if (context.PeriodForever)
             {
@@ -267,9 +248,9 @@ namespace XbrlProcessor.Services
                 context.EntityValue ?? "",
                 context.EntityScheme ?? "",
                 context.EntitySegment ?? "",
-                context.PeriodInstant?.ToString(_settings.DateFormat) ?? "",
-                context.PeriodStartDate?.ToString(_settings.DateFormat) ?? "",
-                context.PeriodEndDate?.ToString(_settings.DateFormat) ?? "",
+                context.PeriodInstant?.ToString(settings.DateFormat) ?? "",
+                context.PeriodStartDate?.ToString(settings.DateFormat) ?? "",
+                context.PeriodEndDate?.ToString(settings.DateFormat) ?? "",
                 context.PeriodForever.ToString()
             };
 
@@ -278,7 +259,7 @@ namespace XbrlProcessor.Services
                 parts.Add($"{scenario.DimensionType}|{scenario.DimensionName}|{scenario.DimensionCode}|{scenario.DimensionValue}");
             }
 
-            return string.Join(_settings.ContextSignatureSeparator, parts);
+            return string.Join(settings.ContextSignatureSeparator, parts);
         }
 
         private string GetUnitSignature(Unit unit)
@@ -288,4 +269,3 @@ namespace XbrlProcessor.Services
 
         #endregion
     }
-}

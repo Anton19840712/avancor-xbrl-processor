@@ -1,11 +1,11 @@
 using XbrlProcessor.Models.Entities;
 
-namespace XbrlProcessor.Builders
-{
-    /// <summary>
-    /// Builder для создания объектов Instance
-    /// </summary>
-    public class InstanceBuilder
+namespace XbrlProcessor.Builders;
+
+/// <summary>
+/// Builder для создания объектов Instance
+/// </summary>
+public class InstanceBuilder
     {
         #region Fields
 
@@ -181,4 +181,3 @@ namespace XbrlProcessor.Builders
 
         #endregion
     }
-}
