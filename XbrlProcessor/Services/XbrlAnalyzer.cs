@@ -105,7 +105,7 @@ public class XbrlAnalyzer(XbrlSettings settings)
             return result;
         }
 
-        private string GetFactKey(Fact fact)
+        private static string GetFactKey(Fact fact)
         {
             return $"{fact.Id}|{fact.ContextRef}";
         }

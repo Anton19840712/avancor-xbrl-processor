@@ -262,7 +262,7 @@ public class XbrlMerger(XbrlSettings settings)
             return string.Join(settings.ContextSignatureSeparator, parts);
         }
 
-        private string GetUnitSignature(Unit unit)
+        private static string GetUnitSignature(Unit unit)
         {
             return $"{unit.Measure}|{unit.Numerator}|{unit.Denominator}";
         }
