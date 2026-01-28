@@ -1,14 +1,24 @@
 using System.Xml.Linq;
 using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Models.Collections;
+using XbrlProcessor.Configuration;
 
 namespace XbrlProcessor.Services
 {
     public class XbrlParser
     {
-        private static readonly XNamespace xbrli = "http://www.xbrl.org/2003/instance";
-        private static readonly XNamespace xbrldi = "http://xbrl.org/2006/xbrldi";
-        private static readonly XNamespace dimInt = "http://www.cbr.ru/xbrl/udr/dim/dim-int";
+        private readonly XNamespace _xbrli;
+        private readonly XNamespace _xbrldi;
+        private readonly XNamespace _dimInt;
+        private readonly XbrlSettings _settings;
+
+        public XbrlParser(XbrlSettings settings)
+        {
+            _settings = settings;
+            _xbrli = settings.XmlNamespaces.Xbrli;
+            _xbrldi = settings.XmlNamespaces.Xbrldi;
+            _dimInt = settings.XmlNamespaces.DimInt;
+        }
 
         public Instance ParseXbrlFile(string filePath)
         {
@@ -16,7 +26,7 @@ namespace XbrlProcessor.Services
             var doc = XDocument.Load(filePath);
 
             // Парсинг контекстов
-            var contexts = doc.Descendants(xbrli + "context");
+            var contexts = doc.Descendants(_xbrli + "context");
             foreach (var contextElement in contexts)
             {
                 var context = ParseContext(contextElement);
@@ -24,7 +34,7 @@ namespace XbrlProcessor.Services
             }
 
             // Парсинг единиц измерения
-            var units = doc.Descendants(xbrli + "unit");
+            var units = doc.Descendants(_xbrli + "unit");
             foreach (var unitElement in units)
             {
                 var unit = ParseUnit(unitElement);
@@ -33,7 +43,7 @@ namespace XbrlProcessor.Services
 
             // Парсинг фактов
             var facts = doc.Root!.Elements()
-                .Where(e => e.Name.Namespace != xbrli &&
+                .Where(e => e.Name.Namespace != _xbrli &&
                            e.Name.LocalName != "schemaRef" &&
                            e.Attribute("contextRef") != null);
 
@@ -54,38 +64,38 @@ namespace XbrlProcessor.Services
             };
 
             // Entity
-            var entity = element.Element(xbrli + "entity");
+            var entity = element.Element(_xbrli + "entity");
             if (entity != null)
             {
-                var identifier = entity.Element(xbrli + "identifier");
+                var identifier = entity.Element(_xbrli + "identifier");
                 context.EntityValue = identifier?.Value;
                 context.EntityScheme = identifier?.Attribute("scheme")?.Value;
-                context.EntitySegment = entity.Element(xbrli + "segment")?.ToString();
+                context.EntitySegment = entity.Element(_xbrli + "segment")?.ToString();
             }
 
             // Period
-            var period = element.Element(xbrli + "period");
+            var period = element.Element(_xbrli + "period");
             if (period != null)
             {
-                var instant = period.Element(xbrli + "instant");
+                var instant = period.Element(_xbrli + "instant");
                 if (instant != null)
                 {
                     context.PeriodInstant = DateTime.Parse(instant.Value);
                 }
 
-                var startDate = period.Element(xbrli + "startDate");
+                var startDate = period.Element(_xbrli + "startDate");
                 if (startDate != null)
                 {
                     context.PeriodStartDate = DateTime.Parse(startDate.Value);
                 }
 
-                var endDate = period.Element(xbrli + "endDate");
+                var endDate = period.Element(_xbrli + "endDate");
                 if (endDate != null)
                 {
                     context.PeriodEndDate = DateTime.Parse(endDate.Value);
                 }
 
-                var forever = period.Element(xbrli + "forever");
+                var forever = period.Element(_xbrli + "forever");
                 if (forever != null)
                 {
                     context.PeriodForever = true;
@@ -93,7 +103,7 @@ namespace XbrlProcessor.Services
             }
 
             // Scenario
-            var scenario = element.Element(xbrli + "scenario");
+            var scenario = element.Element(_xbrli + "scenario");
             if (scenario != null)
             {
                 var members = scenario.Elements();
@@ -139,22 +149,22 @@ namespace XbrlProcessor.Services
                 Id = element.Attribute("id")?.Value
             };
 
-            var measure = element.Element(xbrli + "measure");
+            var measure = element.Element(_xbrli + "measure");
             if (measure != null)
             {
                 unit.Measure = measure.Value;
             }
 
-            var divide = element.Element(xbrli + "divide");
+            var divide = element.Element(_xbrli + "divide");
             if (divide != null)
             {
-                var numerator = divide.Element(xbrli + "unitNumerator")?.Element(xbrli + "measure");
+                var numerator = divide.Element(_xbrli + "unitNumerator")?.Element(_xbrli + "measure");
                 if (numerator != null)
                 {
                     unit.Numerator = numerator.Value;
                 }
 
-                var denominator = divide.Element(xbrli + "unitDenominator")?.Element(xbrli + "measure");
+                var denominator = divide.Element(_xbrli + "unitDenominator")?.Element(_xbrli + "measure");
                 if (denominator != null)
                 {
                     unit.Denominator = denominator.Value;

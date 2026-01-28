@@ -1,32 +1,40 @@
 using System.Xml.Linq;
 using System.Xml.XPath;
+using XbrlProcessor.Configuration;
 
 namespace XbrlProcessor.Services
 {
     public class XPathQueries
     {
-        private static readonly XNamespace xbrli = "http://www.xbrl.org/2003/instance";
-        private static readonly XNamespace xbrldi = "http://xbrl.org/2006/xbrldi";
+        private readonly XNamespace _xbrli;
+        private readonly XNamespace _xbrldi;
+        private readonly XbrlSettings _settings;
 
-        public static void ExecuteQueries(string filePath)
+        public XPathQueries(XbrlSettings settings)
+        {
+            _settings = settings;
+            _xbrli = settings.XmlNamespaces.Xbrli;
+            _xbrldi = settings.XmlNamespaces.Xbrldi;
+        }
+
+        public void ExecuteQueries(string filePath)
         {
             var doc = XDocument.Load(filePath);
             var navigator = doc.CreateNavigator();
 
             // Регистрируем namespace для XPath
             var manager = new System.Xml.XmlNamespaceManager(navigator.NameTable);
-            manager.AddNamespace("xbrli", xbrli.NamespaceName);
-            manager.AddNamespace("xbrldi", xbrldi.NamespaceName);
-            manager.AddNamespace("dim-int", "http://www.cbr.ru/xbrl/udr/dim/dim-int");
+            manager.AddNamespace("xbrli", _xbrli.NamespaceName);
+            manager.AddNamespace("xbrldi", _xbrldi.NamespaceName);
+            manager.AddNamespace("dim-int", _settings.XmlNamespaces.DimInt);
 
             Console.WriteLine("\n=== XPath Запросы ===\n");
 
             // 1. Контексты с периодом instant = "2019-04-30"
             Console.WriteLine("1. Контексты с периодом instant = \"2019-04-30\":");
-            Console.WriteLine("XPath: //xbrli:context[xbrli:period/xbrli:instant='2019-04-30']/@id");
+            Console.WriteLine($"XPath: {_settings.XPathQueries.ContextsWithInstant}");
 
-            var query1 = "//xbrli:context[xbrli:period/xbrli:instant='2019-04-30']/@id";
-            var results1 = navigator.Select(query1, manager);
+            var results1 = navigator.Select(_settings.XPathQueries.ContextsWithInstant, manager);
 
             int count1 = 0;
             foreach (XPathNavigator result in results1)
@@ -38,10 +46,9 @@ namespace XbrlProcessor.Services
 
             // 2. Контексты со сценарием dimension="dim-int:ID_sobstv_CZBTaxis"
             Console.WriteLine("2. Контексты со сценарием dimension=\"dim-int:ID_sobstv_CZBTaxis\":");
-            Console.WriteLine("XPath: //xbrli:context[xbrli:scenario/xbrldi:typedMember[@dimension='dim-int:ID_sobstv_CZBTaxis']]/@id");
+            Console.WriteLine($"XPath: {_settings.XPathQueries.ContextsWithDimension}");
 
-            var query2 = "//xbrli:context[xbrli:scenario/xbrldi:typedMember[@dimension='dim-int:ID_sobstv_CZBTaxis']]/@id";
-            var results2 = navigator.Select(query2, manager);
+            var results2 = navigator.Select(_settings.XPathQueries.ContextsWithDimension, manager);
 
             int count2 = 0;
             foreach (XPathNavigator result in results2)
@@ -53,10 +60,9 @@ namespace XbrlProcessor.Services
 
             // 3. Контексты без сценария
             Console.WriteLine("3. Контексты без сценария:");
-            Console.WriteLine("XPath: //xbrli:context[not(xbrli:scenario)]/@id");
+            Console.WriteLine($"XPath: {_settings.XPathQueries.ContextsWithoutScenario}");
 
-            var query3 = "//xbrli:context[not(xbrli:scenario)]/@id";
-            var results3 = navigator.Select(query3, manager);
+            var results3 = navigator.Select(_settings.XPathQueries.ContextsWithoutScenario, manager);
 
             int count3 = 0;
             foreach (XPathNavigator result in results3)
@@ -67,20 +73,20 @@ namespace XbrlProcessor.Services
             Console.WriteLine($"Найдено: {count3}\n");
         }
 
-        public static void PrintAllQueries()
+        public void PrintAllQueries()
         {
             Console.WriteLine("\n=== Список XPath запросов ===\n");
 
             Console.WriteLine("1. Контексты с периодом instant = \"2019-04-30\":");
-            Console.WriteLine("   //xbrli:context[xbrli:period/xbrli:instant='2019-04-30']/@id");
+            Console.WriteLine($"   {_settings.XPathQueries.ContextsWithInstant}");
             Console.WriteLine();
 
             Console.WriteLine("2. Контексты со сценарием dimension=\"dim-int:ID_sobstv_CZBTaxis\":");
-            Console.WriteLine("   //xbrli:context[xbrli:scenario/xbrldi:typedMember[@dimension='dim-int:ID_sobstv_CZBTaxis']]/@id");
+            Console.WriteLine($"   {_settings.XPathQueries.ContextsWithDimension}");
             Console.WriteLine();
 
             Console.WriteLine("3. Контексты без сценария:");
-            Console.WriteLine("   //xbrli:context[not(xbrli:scenario)]/@id");
+            Console.WriteLine($"   {_settings.XPathQueries.ContextsWithoutScenario}");
             Console.WriteLine();
         }
     }

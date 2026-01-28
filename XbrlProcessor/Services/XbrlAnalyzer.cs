@@ -1,9 +1,16 @@
 using XbrlProcessor.Models.Entities;
+using XbrlProcessor.Configuration;
 
 namespace XbrlProcessor.Services
 {
     public class XbrlAnalyzer
     {
+        private readonly XbrlSettings _settings;
+
+        public XbrlAnalyzer(XbrlSettings settings)
+        {
+            _settings = settings;
+        }
         // Поиск дубликатов контекстов
         public List<List<Context>> FindDuplicateContexts(Instance instance)
         {
@@ -29,9 +36,9 @@ namespace XbrlProcessor.Services
                 context.EntityValue ?? "",
                 context.EntityScheme ?? "",
                 context.EntitySegment ?? "",
-                context.PeriodInstant?.ToString("yyyy-MM-dd") ?? "",
-                context.PeriodStartDate?.ToString("yyyy-MM-dd") ?? "",
-                context.PeriodEndDate?.ToString("yyyy-MM-dd") ?? "",
+                context.PeriodInstant?.ToString(_settings.DateFormat) ?? "",
+                context.PeriodStartDate?.ToString(_settings.DateFormat) ?? "",
+                context.PeriodEndDate?.ToString(_settings.DateFormat) ?? "",
                 context.PeriodForever.ToString()
             };
 
@@ -41,7 +48,7 @@ namespace XbrlProcessor.Services
                 parts.Add($"{scenario.DimensionType}|{scenario.DimensionName}|{scenario.DimensionCode}|{scenario.DimensionValue}");
             }
 
-            return string.Join("||", parts);
+            return string.Join(_settings.ContextSignatureSeparator, parts);
         }
 
         // Сравнение двух отчетов
