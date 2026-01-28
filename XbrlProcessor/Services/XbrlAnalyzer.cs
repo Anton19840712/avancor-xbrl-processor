@@ -3,15 +3,27 @@ using XbrlProcessor.Configuration;
 
 namespace XbrlProcessor.Services
 {
+    /// <summary>
+    /// Сервис для анализа XBRL данных
+    /// </summary>
     public class XbrlAnalyzer
     {
         private readonly XbrlSettings _settings;
 
+        /// <summary>
+        /// Конструктор анализатора XBRL
+        /// </summary>
+        /// <param name="settings">Настройки приложения</param>
         public XbrlAnalyzer(XbrlSettings settings)
         {
             _settings = settings;
         }
-        // Поиск дубликатов контекстов
+
+        /// <summary>
+        /// Находит дубликаты контекстов в отчете
+        /// </summary>
+        /// <param name="instance">Объект Instance для анализа</param>
+        /// <returns>Список групп дублирующихся контекстов</returns>
         public List<List<Context>> FindDuplicateContexts(Instance instance)
         {
             var duplicates = new List<List<Context>>();
@@ -51,7 +63,12 @@ namespace XbrlProcessor.Services
             return string.Join(_settings.ContextSignatureSeparator, parts);
         }
 
-        // Сравнение двух отчетов
+        /// <summary>
+        /// Сравнивает два отчета и выявляет различия в фактах
+        /// </summary>
+        /// <param name="instance1">Первый отчет для сравнения</param>
+        /// <param name="instance2">Второй отчет для сравнения</param>
+        /// <returns>Результат сравнения с отсутствующими, новыми и измененными фактами</returns>
         public ComparisonResult CompareInstances(Instance instance1, Instance instance2)
         {
             var result = new ComparisonResult();

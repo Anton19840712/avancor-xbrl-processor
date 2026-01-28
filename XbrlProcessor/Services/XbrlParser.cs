@@ -5,6 +5,9 @@ using XbrlProcessor.Configuration;
 
 namespace XbrlProcessor.Services
 {
+    /// <summary>
+    /// Сервис для парсинга XBRL файлов
+    /// </summary>
     public class XbrlParser
     {
         private readonly XNamespace _xbrli;
@@ -12,6 +15,10 @@ namespace XbrlProcessor.Services
         private readonly XNamespace _dimInt;
         private readonly XbrlSettings _settings;
 
+        /// <summary>
+        /// Конструктор парсера XBRL
+        /// </summary>
+        /// <param name="settings">Настройки приложения</param>
         public XbrlParser(XbrlSettings settings)
         {
             _settings = settings;
@@ -20,6 +27,11 @@ namespace XbrlProcessor.Services
             _dimInt = settings.XmlNamespaces.DimInt;
         }
 
+        /// <summary>
+        /// Парсит XBRL файл и возвращает объект Instance
+        /// </summary>
+        /// <param name="filePath">Путь к XBRL файлу</param>
+        /// <returns>Объект Instance с данными из файла</returns>
         public Instance ParseXbrlFile(string filePath)
         {
             var instance = new Instance();

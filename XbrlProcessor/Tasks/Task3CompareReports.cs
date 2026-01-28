@@ -4,8 +4,18 @@ using XbrlProcessor.Services;
 
 namespace XbrlProcessor.Tasks
 {
+    /// <summary>
+    /// Задание 3: Сравнение двух XBRL отчетов и выявление различий
+    /// </summary>
     public static class Task3CompareReports
     {
+        /// <summary>
+        /// Выполняет сравнение двух отчетов и выводит различия
+        /// </summary>
+        /// <param name="instance1">Первый отчет</param>
+        /// <param name="instance2">Второй отчет</param>
+        /// <param name="analyzer">Сервис анализа XBRL</param>
+        /// <param name="settings">Настройки приложения</param>
         public static void Run(Instance instance1, Instance instance2, XbrlAnalyzer analyzer, XbrlSettings settings)
         {
             Console.WriteLine("\n\n=== Задание 3: Выявление различий между отчетами ===\n");

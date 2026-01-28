@@ -3,8 +3,17 @@ using XbrlProcessor.Services;
 
 namespace XbrlProcessor.Tasks
 {
+    /// <summary>
+    /// Задание 1: Поиск дубликатов контекстов в XBRL отчетах
+    /// </summary>
     public static class Task1DuplicateContexts
     {
+        /// <summary>
+        /// Выполняет поиск дубликатов контекстов в двух отчетах
+        /// </summary>
+        /// <param name="instance1">Первый отчет</param>
+        /// <param name="instance2">Второй отчет</param>
+        /// <param name="analyzer">Сервис анализа XBRL</param>
         public static void Run(Instance instance1, Instance instance2, XbrlAnalyzer analyzer)
         {
             Console.WriteLine("=== Задание 1: Поиск дубликатов контекстов ===\n");

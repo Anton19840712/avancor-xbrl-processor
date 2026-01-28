@@ -4,6 +4,9 @@ using XbrlProcessor.Configuration;
 
 namespace XbrlProcessor.Services
 {
+    /// <summary>
+    /// Сервис для объединения XBRL отчетов
+    /// </summary>
     public class XbrlMerger
     {
         private readonly XNamespace _xbrli;
@@ -14,6 +17,10 @@ namespace XbrlProcessor.Services
         private readonly XNamespace _purcbDic;
         private readonly XbrlSettings _settings;
 
+        /// <summary>
+        /// Конструктор сервиса объединения XBRL
+        /// </summary>
+        /// <param name="settings">Настройки приложения</param>
         public XbrlMerger(XbrlSettings settings)
         {
             _settings = settings;
@@ -25,6 +32,12 @@ namespace XbrlProcessor.Services
             _purcbDic = settings.XmlNamespaces.PurcbDic;
         }
 
+        /// <summary>
+        /// Объединяет два отчета в один, удаляя дубликаты контекстов, единиц и фактов
+        /// </summary>
+        /// <param name="instance1">Первый отчет</param>
+        /// <param name="instance2">Второй отчет</param>
+        /// <returns>Объединенный отчет с уникальными элементами</returns>
         public Instance MergeInstances(Instance instance1, Instance instance2)
         {
             var merged = new Instance();
@@ -68,6 +81,12 @@ namespace XbrlProcessor.Services
             return merged;
         }
 
+        /// <summary>
+        /// Сохраняет объект Instance в XBRL файл
+        /// </summary>
+        /// <param name="instance">Объект Instance для сохранения</param>
+        /// <param name="filePath">Путь для сохранения файла</param>
+        /// <param name="templatePath">Путь к шаблону XBRL файла</param>
         public void SaveToXbrl(Instance instance, string filePath, string templatePath)
         {
             // Загружаем шаблон из одного из исходных файлов

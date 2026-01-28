@@ -4,12 +4,19 @@ using XbrlProcessor.Configuration;
 
 namespace XbrlProcessor.Services
 {
+    /// <summary>
+    /// Сервис для выполнения XPath запросов к XBRL файлам
+    /// </summary>
     public class XPathQueries
     {
         private readonly XNamespace _xbrli;
         private readonly XNamespace _xbrldi;
         private readonly XbrlSettings _settings;
 
+        /// <summary>
+        /// Конструктор сервиса XPath запросов
+        /// </summary>
+        /// <param name="settings">Настройки приложения</param>
         public XPathQueries(XbrlSettings settings)
         {
             _settings = settings;
@@ -17,6 +24,10 @@ namespace XbrlProcessor.Services
             _xbrldi = settings.XmlNamespaces.Xbrldi;
         }
 
+        /// <summary>
+        /// Выполняет все настроенные XPath запросы к XBRL файлу
+        /// </summary>
+        /// <param name="filePath">Путь к XBRL файлу</param>
         public void ExecuteQueries(string filePath)
         {
             var doc = XDocument.Load(filePath);
@@ -73,6 +84,9 @@ namespace XbrlProcessor.Services
             Console.WriteLine($"Найдено: {count3}\n");
         }
 
+        /// <summary>
+        /// Выводит список всех настроенных XPath запросов в консоль
+        /// </summary>
         public void PrintAllQueries()
         {
             Console.WriteLine("\n=== Список XPath запросов ===\n");
