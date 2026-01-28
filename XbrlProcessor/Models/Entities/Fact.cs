@@ -11,21 +11,21 @@ namespace XbrlProcessor.Models.Entities
     {
         /// <summary>Идентификатор фактов (значений отчета)</summary>
         /// <see>xbrli:unit/[@id]</see>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>Ссылка на контекст</summary>
         /// <see>xbrli:unit/[@contextRef]</see>
-        public virtual string ContextRef { get; set; }
+        public virtual string? ContextRef { get; set; }
 
         /// <summary>Используемые контекст</summary>
-        public virtual Context Context { get; set; }
+        public virtual Context? Context { get; set; }
 
         /// <summary>Ссылка на единицу измерения</summary>
         /// <see>xbrli:unit/[@unitRef]</see>
-        public virtual string UnitRef { get; set; }
+        public virtual string? UnitRef { get; set; }
 
         /// <summary>Используемые юнит</summary>
-        public virtual Unit Unit { get; set; }
+        public virtual Unit? Unit { get; set; }
 
         /// <summary>Точность измерения</summary>
         /// <see>xbrli:unit/[@decimals]</see>
@@ -37,7 +37,7 @@ namespace XbrlProcessor.Models.Entities
 
         /// <summary>Значение</summary>
         /// <see>xbrli:unit/*</see>
-        public virtual string Value { get; set; }
+        public virtual string? Value { get; set; }
 
     }
 

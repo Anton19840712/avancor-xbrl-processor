@@ -97,22 +97,22 @@ namespace XbrlProcessor.Models.Entities
 
     {
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>Значение контекста</summary>
         /// <value>Строковое значение, максимальная длина 200, обязательное</value>
         /// <see>xbrli:context/xbrli:entity/xbrli:identifier</see>
-        public virtual string EntityValue { get; set; }
+        public virtual string? EntityValue { get; set; }
 
         /// <summary>Схема контекста</summary>
         /// <value>Строковое значение, максимальная длина 200, обязательное</value>
         /// <see>xbrli:context/xbrli:entity/xbrli:identifier[@scheme]</see>
-        public virtual string EntityScheme { get; set; }
+        public virtual string? EntityScheme { get; set; }
 
         /// <summary>Сегмент контекста (значение XBRL)</summary>
         /// <value>Строковое значение, максимальная длина 200, необязательное</value>
         /// <see>xbrli:context/xbrli:entity/xbrli:segment</see>
-        public virtual string EntitySegment { get; set; }
+        public virtual string? EntitySegment { get; set; }
 
         /// <summary>Дата отчета (значение XBRL)</summary>
         /// <value>Значение даты, необязательное</value>

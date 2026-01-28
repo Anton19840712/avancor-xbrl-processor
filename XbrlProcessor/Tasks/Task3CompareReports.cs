@@ -45,9 +45,9 @@ namespace XbrlProcessor.Tasks
             {
                 foreach (var diff in comparison.ModifiedFacts)
                 {
-                    Console.WriteLine($"  - {diff.Fact1.Id} (context: {diff.Fact1.ContextRef})");
-                    Console.WriteLine($"    Report1: {diff.Fact1.Value}");
-                    Console.WriteLine($"    Report2: {diff.Fact2.Value}");
+                    Console.WriteLine($"  - {diff.Fact1?.Id} (context: {diff.Fact1?.ContextRef})");
+                    Console.WriteLine($"    Report1: {diff.Fact1?.Value}");
+                    Console.WriteLine($"    Report2: {diff.Fact2?.Value}");
                 }
             }
         }

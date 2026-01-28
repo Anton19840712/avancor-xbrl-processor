@@ -188,7 +188,7 @@ namespace XbrlProcessor.Services
                 return typedMember;
             }
 
-            return new XElement(_xbrldi + scenario.DimensionType);
+            return new XElement(_xbrldi + (scenario.DimensionType ?? ""));
         }
 
         private XElement CreateUnitElement(Unit unit)
@@ -215,7 +215,7 @@ namespace XbrlProcessor.Services
 
         private XElement CreateFactElement(Fact fact)
         {
-            var name = XName.Get(fact.Id, _purcbDic.NamespaceName);
+            var name = XName.Get(fact.Id ?? "", _purcbDic.NamespaceName);
             var element = new XElement(name, fact.Value ?? "");
 
             if (!string.IsNullOrEmpty(fact.ContextRef))

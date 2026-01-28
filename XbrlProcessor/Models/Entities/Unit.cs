@@ -55,21 +55,21 @@ namespace XbrlProcessor.Models.Entities
 
     public class Unit
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         /// <summary>Парметр Measure (значение XBRL)</summary>
         /// <value>Строковое значение, максимальная длина 200, обязательое</value>
         /// <see>xbrli:unit/xbrli:measure</see>
-        public virtual string Measure { get; set; }
+        public virtual string? Measure { get; set; }
 
         /// <summary>Парметр Numerator (значение XBRL)</summary>
         /// <value>Строковое значение, максимальная длина 200, необязательое</value>
         /// <see>xbrli:unit/xbrli:unitNumerator</see>
-        public virtual string Numerator { get; set; }
+        public virtual string? Numerator { get; set; }
 
         /// <summary>Парметр unitDenominator (значение XBRL)</summary>
         /// <value>Строковое значение, максимальная длина 200, необязательое</value>
         /// <see>xbrli:unit/xbrli:unitDenominator</see>
-        public virtual string Denominator { get; set; }
+        public virtual string? Denominator { get; set; }
 
     }
 

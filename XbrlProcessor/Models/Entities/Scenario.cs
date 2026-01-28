@@ -65,23 +65,23 @@ namespace XbrlProcessor.Models.Entities
         /// <summary>Тип измерерия XBRL</summary>
         /// <value>Строкое значение, максимальная длина 200, обязательное</value>
         /// <see>xbrli:context/xbrli:scenario/(*)[name]: explicitMember, typedMember</see>
-        public virtual string DimensionType { get; set; } = default;
+        public virtual string? DimensionType { get; set; }
 
         /// <summary>Наименование измерерия XBRL</summary>
         /// <value>Строкое значение, максимальная длина 200, необязательное</value>
         /// <see>xbrli:context/xbrli:scenario/(*)/[@dimension]</see>
-        public virtual string DimensionName { get; set; }
+        public virtual string? DimensionName { get; set; }
 
         /// <summary>Код измерерия XBRL</summary>
         /// <value>Строкое значение, максимальная длина 500, необязательное</value>
         /// <see>xbrli:context/xbrli:scenario/xbrldi:typedMember/(*)[name]</see>
-        public virtual string DimensionCode { get; set; }
+        public virtual string? DimensionCode { get; set; }
 
         /// <summary>Значение измерерия XBRL (dimension)</summary>
         /// <value>Строкое значение, максимальная длина 500, обязательное, индексируемое</value>
         /// <see>xbrli:context/xbrli:scenario/xbrldi:explicitMember</see>
         /// <see>xbrli:context/xbrli:scenario/xbrldi:typedMember/(*)</see>
-        public virtual string DimensionValue { get; set; }
+        public virtual string? DimensionValue { get; set; }
 
     }
 

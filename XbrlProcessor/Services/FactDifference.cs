@@ -10,16 +10,16 @@ namespace XbrlProcessor.Services
         /// <summary>
         /// Ключ факта (комбинация Id и ContextRef)
         /// </summary>
-        public string FactKey { get; set; }
+        public string? FactKey { get; set; }
 
         /// <summary>
         /// Факт из первого отчета
         /// </summary>
-        public Fact Fact1 { get; set; }
+        public Fact? Fact1 { get; set; }
 
         /// <summary>
         /// Факт из второго отчета
         /// </summary>
-        public Fact Fact2 { get; set; }
+        public Fact? Fact2 { get; set; }
     }
 }
