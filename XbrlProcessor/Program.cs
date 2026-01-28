@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using XbrlProcessor.Configuration;
 using XbrlProcessor.Services;
 using XbrlProcessor.Tasks;
@@ -12,11 +13,26 @@ var configuration = new ConfigurationBuilder()
 var settings = new XbrlSettings();
 configuration.GetSection("XbrlSettings").Bind(settings);
 
+// Настройка DI контейнера
+var services = new ServiceCollection();
+
+// Регистрация настроек
+services.AddSingleton(settings);
+
+// Регистрация сервисов
+services.AddScoped<XbrlParser>();
+services.AddScoped<XbrlAnalyzer>();
+services.AddScoped<XbrlMerger>();
+services.AddScoped<XPathQueries>();
+
+var serviceProvider = services.BuildServiceProvider();
+
 Console.WriteLine("=== XBRL Processor - Тестовое задание ===\n");
 
-var parser = new XbrlParser(settings);
-var analyzer = new XbrlAnalyzer(settings);
-var merger = new XbrlMerger(settings);
+// Получаем сервисы из DI контейнера
+var parser = serviceProvider.GetRequiredService<XbrlParser>();
+var analyzer = serviceProvider.GetRequiredService<XbrlAnalyzer>();
+var merger = serviceProvider.GetRequiredService<XbrlMerger>();
 
 // Пути к файлам
 var report1Path = settings.GetReport1Path();
