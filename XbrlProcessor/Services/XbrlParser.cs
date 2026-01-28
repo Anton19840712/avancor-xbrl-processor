@@ -2,6 +2,7 @@ using System.Xml.Linq;
 using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Models.Collections;
 using XbrlProcessor.Configuration;
+using XbrlProcessor.Builders;
 
 namespace XbrlProcessor.Services
 {
@@ -34,38 +35,31 @@ namespace XbrlProcessor.Services
         /// <returns>Объект Instance с данными из файла</returns>
         public Instance ParseXbrlFile(string filePath)
         {
-            var instance = new Instance();
             var doc = XDocument.Load(filePath);
+            var builder = new InstanceBuilder();
 
             // Парсинг контекстов
-            var contexts = doc.Descendants(_xbrli + "context");
-            foreach (var contextElement in contexts)
-            {
-                var context = ParseContext(contextElement);
-                instance.Contexts.Add(context);
-            }
+            var contexts = doc.Descendants(_xbrli + "context")
+                .Select(ParseContext)
+                .ToList();
+            builder.AddContexts(contexts);
 
             // Парсинг единиц измерения
-            var units = doc.Descendants(_xbrli + "unit");
-            foreach (var unitElement in units)
-            {
-                var unit = ParseUnit(unitElement);
-                instance.Units.Add(unit);
-            }
+            var units = doc.Descendants(_xbrli + "unit")
+                .Select(ParseUnit)
+                .ToList();
+            builder.AddUnits(units);
 
             // Парсинг фактов
             var facts = doc.Root!.Elements()
                 .Where(e => e.Name.Namespace != _xbrli &&
                            e.Name.LocalName != "schemaRef" &&
-                           e.Attribute("contextRef") != null);
+                           e.Attribute("contextRef") != null)
+                .Select(ParseFact)
+                .ToList();
+            builder.AddFacts(facts);
 
-            foreach (var factElement in facts)
-            {
-                var fact = ParseFact(factElement);
-                instance.Facts.Add(fact);
-            }
-
-            return instance;
+            return builder.Build();
         }
 
         private Context ParseContext(XElement element)

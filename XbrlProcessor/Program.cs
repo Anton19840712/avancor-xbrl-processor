@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using XbrlProcessor.Configuration;
 using XbrlProcessor.Services;
-using XbrlProcessor.Tasks;
+using XbrlProcessor.Commands;
 
 // Загрузка конфигурации
 var configuration = new ConfigurationBuilder()
@@ -47,16 +47,22 @@ var instance2 = parser.ParseXbrlFile(report2Path);
 Console.WriteLine($"Report1: {instance1.Contexts.Count} контекстов, {instance1.Units.Count} единиц, {instance1.Facts.Count} фактов");
 Console.WriteLine($"Report2: {instance2.Contexts.Count} контекстов, {instance2.Units.Count} единиц, {instance2.Facts.Count} фактов\n");
 
+// Создаем команды используя Command Pattern
+var invoker = new CommandInvoker();
+
 // Задание 1: Найти дубликаты контекстов
-Task1DuplicateContexts.Run(instance1, instance2, analyzer);
+invoker.AddCommand(new FindDuplicateContextsCommand(instance1, instance2, analyzer));
 
 // Задание 2: Объединить отчеты
-Task2MergeReports.Run(instance1, instance2, merger, mergedPath, report1Path);
+invoker.AddCommand(new MergeReportsCommand(instance1, instance2, merger, mergedPath, report1Path));
 
 // Задание 3: Выявить различия
-Task3CompareReports.Run(instance1, instance2, analyzer, settings);
+invoker.AddCommand(new CompareReportsCommand(instance1, instance2, analyzer, settings));
 
 // Задание 4: XPath запросы
-Task4XPathQueries.Run(report1Path, settings);
+invoker.AddCommand(new ExecuteXPathQueriesCommand(report1Path, settings));
+
+// Выполняем все команды
+invoker.ExecuteAll();
 
 Console.WriteLine("\n=== Выполнение завершено ===");

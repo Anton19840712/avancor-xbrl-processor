@@ -1,6 +1,7 @@
 using System.Xml.Linq;
 using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Configuration;
+using XbrlProcessor.Builders;
 
 namespace XbrlProcessor.Services
 {
@@ -40,7 +41,7 @@ namespace XbrlProcessor.Services
         /// <returns>Объединенный отчет с уникальными элементами</returns>
         public Instance MergeInstances(Instance instance1, Instance instance2)
         {
-            var merged = new Instance();
+            var builder = new InstanceBuilder();
 
             // Объединяем контексты (удаляем дубликаты)
             var contextMap = new Dictionary<string, Context>();
@@ -50,7 +51,7 @@ namespace XbrlProcessor.Services
                 if (!contextMap.ContainsKey(signature))
                 {
                     contextMap[signature] = context;
-                    merged.Contexts.Add(context);
+                    builder.AddContext(context);
                 }
             }
 
@@ -62,7 +63,7 @@ namespace XbrlProcessor.Services
                 if (!unitMap.ContainsKey(signature))
                 {
                     unitMap[signature] = unit;
-                    merged.Units.Add(unit);
+                    builder.AddUnit(unit);
                 }
             }
 
@@ -74,11 +75,11 @@ namespace XbrlProcessor.Services
                 if (!factMap.ContainsKey(key))
                 {
                     factMap[key] = fact;
-                    merged.Facts.Add(fact);
+                    builder.AddFact(fact);
                 }
             }
 
-            return merged;
+            return builder.Build();
         }
 
         /// <summary>
