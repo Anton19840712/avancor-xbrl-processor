@@ -10,23 +10,22 @@ namespace XbrlProcessor.Commands;
 /// <param name="settings">Настройки приложения</param>
 public class ExecuteXPathQueriesCommand(string reportPath, XbrlSettings settings) : IXbrlCommand
 {
+    #region IXbrlCommand Implementation
 
-        #region IXbrlCommand Implementation
+    public void Execute()
+    {
+        Console.WriteLine("\n\n=== Задание 4: XPath запросы ===\n");
 
-        public void Execute()
-        {
-            Console.WriteLine("\n\n=== Задание 4: XPath запросы ===\n");
+        var xpathQueries = new XPathQueries(settings);
+        xpathQueries.PrintAllQueries();
 
-            var xpathQueries = new XPathQueries(settings);
-            xpathQueries.PrintAllQueries();
-
-            Console.WriteLine("\nВыполнение XPath запросов на report1.xbrl:");
-            xpathQueries.ExecuteQueries(reportPath);
-        }
-
-        public string GetName() => "ExecuteXPathQueries";
-
-        public string GetDescription() => "Выполнение XPath запросов к XBRL файлу";
-
-        #endregion
+        Console.WriteLine("\nВыполнение XPath запросов на report1.xbrl:");
+        xpathQueries.ExecuteQueries(reportPath);
     }
+
+    public string GetName() => "ExecuteXPathQueries";
+
+    public string GetDescription() => "Выполнение XPath запросов к XBRL файлу";
+
+    #endregion
+}
