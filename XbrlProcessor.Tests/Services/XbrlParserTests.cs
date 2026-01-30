@@ -80,13 +80,13 @@ public class XbrlParserTests
         context.Scenarios.Should().HaveCount(2);
 
         // Test explicit member
-        var explicitMember = context.Scenarios.First(s => s.DimensionType == "explicitMember");
+        var explicitMember = context.Scenarios.First(s => s.DimensionType == DimensionType.ExplicitMember);
         explicitMember.DimensionName.Should().Be("dim-int:TestDimension");
         explicitMember.DimensionValue.Should().Be("purcb-dic:TestMember");
         explicitMember.DimensionCode.Should().BeNull();
 
         // Test typed member
-        var typedMember = context.Scenarios.First(s => s.DimensionType == "typedMember");
+        var typedMember = context.Scenarios.First(s => s.DimensionType == DimensionType.TypedMember);
         typedMember.DimensionName.Should().Be("dim-int:ID_sobstv_CZBTaxis");
         typedMember.DimensionCode.Should().Be("ID_sobstv_CZB");
         typedMember.DimensionValue.Should().Be("12345");

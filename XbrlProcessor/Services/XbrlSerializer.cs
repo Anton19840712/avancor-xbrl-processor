@@ -101,14 +101,14 @@ public class XbrlSerializer(XbrlSettings settings)
 
     private XElement CreateScenarioElement(Scenario scenario)
     {
-        if (scenario.DimensionType == "explicitMember")
+        if (scenario.DimensionType == DimensionType.ExplicitMember)
         {
             return new XElement(_xbrldi + "explicitMember",
                 new XAttribute("dimension", scenario.DimensionName ?? ""),
                 scenario.DimensionValue ?? "");
         }
 
-        if (scenario.DimensionType == "typedMember")
+        if (scenario.DimensionType == DimensionType.TypedMember)
         {
             var typedMember = new XElement(_xbrldi + "typedMember",
                 new XAttribute("dimension", scenario.DimensionName ?? ""));
@@ -119,7 +119,7 @@ public class XbrlSerializer(XbrlSettings settings)
             return typedMember;
         }
 
-        return new XElement(_xbrldi + (scenario.DimensionType ?? ""));
+        return new XElement(_xbrldi + scenario.DimensionType.ToXmlName());
     }
 
     private XElement CreateUnitElement(Unit unit)

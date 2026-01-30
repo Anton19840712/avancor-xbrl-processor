@@ -21,7 +21,7 @@ public class XbrlMerger(XbrlSettings settings)
         var contextMap = new Dictionary<string, Context>();
         foreach (var context in instance1.Contexts.Concat(instance2.Contexts))
         {
-            var signature = GetContextSignature(context);
+            var signature = ContextSignatureHelper.GetSignature(context, settings);
             if (!contextMap.ContainsKey(signature))
             {
                 contextMap[signature] = context;
@@ -54,27 +54,6 @@ public class XbrlMerger(XbrlSettings settings)
         }
 
         return builder.Build();
-    }
-
-    private string GetContextSignature(Context context)
-    {
-        var parts = new List<string>
-        {
-            context.EntityValue ?? "",
-            context.EntityScheme ?? "",
-            context.EntitySegment ?? "",
-            context.PeriodInstant?.ToString(settings.DateFormat) ?? "",
-            context.PeriodStartDate?.ToString(settings.DateFormat) ?? "",
-            context.PeriodEndDate?.ToString(settings.DateFormat) ?? "",
-            context.PeriodForever.ToString()
-        };
-
-        foreach (var scenario in context.Scenarios.OrderBy(s => s.DimensionName))
-        {
-            parts.Add($"{scenario.DimensionType}|{scenario.DimensionName}|{scenario.DimensionCode}|{scenario.DimensionValue}");
-        }
-
-        return string.Join(settings.ContextSignatureSeparator, parts);
     }
 
     private static string GetUnitSignature(Unit unit)

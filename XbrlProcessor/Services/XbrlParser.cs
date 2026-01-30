@@ -122,16 +122,16 @@ public class XbrlParser(XbrlSettings settings)
 
     private static Scenario ParseScenario(XElement element)
     {
-        var dimensionType = element.Name.LocalName;
+        var dimensionType = DimensionTypeExtensions.FromXmlName(element.Name.LocalName);
         var dimensionName = element.Attribute("dimension")?.Value;
         string? dimensionCode = null;
         string? dimensionValue = null;
 
-        if (dimensionType == "explicitMember")
+        if (dimensionType == DimensionType.ExplicitMember)
         {
             dimensionValue = element.Value;
         }
-        else if (dimensionType == "typedMember")
+        else if (dimensionType == DimensionType.TypedMember)
         {
             var child = element.Elements().FirstOrDefault();
             if (child != null)
