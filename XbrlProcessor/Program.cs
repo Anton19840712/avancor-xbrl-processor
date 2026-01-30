@@ -23,6 +23,7 @@ services.AddSingleton(settings);
 services.AddScoped<XbrlParser>();
 services.AddScoped<XbrlAnalyzer>();
 services.AddScoped<XbrlMerger>();
+services.AddScoped<XbrlSerializer>();
 services.AddScoped<XPathQueries>();
 
 var serviceProvider = services.BuildServiceProvider();
@@ -33,6 +34,7 @@ Console.WriteLine("=== XBRL Processor - Тестовое задание ===\n");
 var parser = serviceProvider.GetRequiredService<XbrlParser>();
 var analyzer = serviceProvider.GetRequiredService<XbrlAnalyzer>();
 var merger = serviceProvider.GetRequiredService<XbrlMerger>();
+var serializer = serviceProvider.GetRequiredService<XbrlSerializer>();
 
 // Пути к файлам
 var report1Path = settings.GetReport1Path();
@@ -54,7 +56,7 @@ var invoker = new CommandInvoker();
 invoker.AddCommand(new FindDuplicateContextsCommand(instance1, instance2, analyzer));
 
 // Задание 2: Объединить отчеты
-invoker.AddCommand(new MergeReportsCommand(instance1, instance2, merger, mergedPath, report1Path));
+invoker.AddCommand(new MergeReportsCommand(instance1, instance2, merger, serializer, mergedPath, report1Path));
 
 // Задание 3: Выявить различия
 invoker.AddCommand(new CompareReportsCommand(instance1, instance2, analyzer, settings));
