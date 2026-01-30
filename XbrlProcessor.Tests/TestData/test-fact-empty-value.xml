@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance"
+            xmlns:purcb-dic="http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic">
+    <xbrli:context id="C1">
+        <xbrli:entity>
+            <xbrli:identifier scheme="http://www.cbr.ru">1234567890</xbrli:identifier>
+        </xbrli:entity>
+        <xbrli:period>
+            <xbrli:instant>2019-04-30</xbrli:instant>
+        </xbrli:period>
+    </xbrli:context>
+    <purcb-dic:EmptyFact contextRef="C1"></purcb-dic:EmptyFact>
+</xbrli:xbrl>
