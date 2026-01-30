@@ -90,7 +90,7 @@ public class XbrlAnalyzer(XbrlSettings settings)
             {
                 if (facts2.TryGetValue(kvp.Key, out var fact2))
                 {
-                    if (kvp.Value.Value != fact2.Value)
+                    if (!kvp.Value.Value.SemanticallyEquals(fact2.Value))
                     {
                         result.ModifiedFacts.Add(new FactDifference
                         {

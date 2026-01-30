@@ -34,8 +34,8 @@ public class Fact
         /// <see>xbrli:unit/[@precision]</see>
         public virtual int? Precision { get; set; }
 
-        /// <summary>Значение</summary>
+        /// <summary>Типизированное значение факта</summary>
         /// <see>xbrli:unit/*</see>
-        public virtual string? Value { get; set; }
+        public virtual XbrlValue Value { get; set; } = XbrlValue.Parse(null);
 
     }
