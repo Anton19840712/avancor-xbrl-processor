@@ -11,14 +11,9 @@ public class XbrlSettings
         public string ReportsPath { get; set; } = "Reports";
 
         /// <summary>
-        /// Имя файла первого отчета
+        /// Паттерн для поиска файлов отчетов (glob)
         /// </summary>
-        public string Report1FileName { get; set; } = "report1.xbrl";
-
-        /// <summary>
-        /// Имя файла второго отчета
-        /// </summary>
-        public string Report2FileName { get; set; } = "report2.xbrl";
+        public string ReportFilePattern { get; set; } = "*.xbrl";
 
         /// <summary>
         /// Имя файла объединенного отчета
@@ -41,6 +36,11 @@ public class XbrlSettings
         public string ContextSignatureSeparator { get; set; } = "||";
 
         /// <summary>
+        /// Настройки обработки отчетов
+        /// </summary>
+        public ProcessingSettings Processing { get; set; } = new();
+
+        /// <summary>
         /// Настройки XML пространств имен
         /// </summary>
         public XmlNamespacesSettings XmlNamespaces { get; set; } = new();
@@ -51,21 +51,20 @@ public class XbrlSettings
         public XPathQueriesSettings XPathQueries { get; set; } = new();
 
         /// <summary>
-        /// Получить полный путь к первому отчету
+        /// Получить пути ко всем файлам отчетов (исключая merged)
         /// </summary>
-        /// <returns>Полный путь к файлу report1.xbrl</returns>
-        public string GetReport1Path() => Path.Combine(ReportsPath, Report1FileName);
-
-        /// <summary>
-        /// Получить полный путь ко второму отчету
-        /// </summary>
-        /// <returns>Полный путь к файлу report2.xbrl</returns>
-        public string GetReport2Path() => Path.Combine(ReportsPath, Report2FileName);
+        public string[] GetReportPaths()
+        {
+            var mergedPath = GetMergedReportPath();
+            return Directory.GetFiles(ReportsPath, ReportFilePattern)
+                .Where(f => !string.Equals(Path.GetFullPath(f), Path.GetFullPath(mergedPath), StringComparison.OrdinalIgnoreCase))
+                .OrderBy(f => f)
+                .ToArray();
+        }
 
         /// <summary>
         /// Получить полный путь к объединенному отчету
         /// </summary>
-        /// <returns>Полный путь к файлу merged_report.xbrl</returns>
         public string GetMergedReportPath() => Path.Combine(ReportsPath, MergedReportFileName);
     }
 
@@ -103,6 +102,42 @@ public class XbrlSettings
         /// Пространство имен словаря показателей ЦБ РФ
         /// </summary>
         public string PurcbDic { get; init; } = "http://www.cbr.ru/xbrl/nso/purcb/dic/purcb-dic";
+    }
+
+    /// <summary>
+    /// Режим парсера XML
+    /// </summary>
+    public enum ParserMode
+    {
+        /// <summary>XDocument — загружает весь файл в память</summary>
+        XDocument,
+
+        /// <summary>Потоковый XmlReader — не загружает весь файл в память</summary>
+        Streaming
+    }
+
+    /// <summary>
+    /// Настройки обработки отчетов (параллелизм, режим парсера)
+    /// </summary>
+    public record ProcessingSettings
+    {
+        /// <summary>
+        /// Степень параллелизма при загрузке/парсинге файлов.
+        /// 1 = последовательно, >1 = параллельно, 0 = Environment.ProcessorCount.
+        /// </summary>
+        public int MaxDegreeOfParallelism { get; init; } = 1;
+
+        /// <summary>
+        /// Режим парсера XML
+        /// </summary>
+        public ParserMode ParserMode { get; init; } = ParserMode.Streaming;
+
+        /// <summary>
+        /// Размер батча при пакетной обработке файлов.
+        /// Актуален при большом количестве файлов — обрабатываются пачками по BatchSize.
+        /// 0 = обработать все разом.
+        /// </summary>
+        public int BatchSize { get; init; } = 0;
     }
 
     /// <summary>
