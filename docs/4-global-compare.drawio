@@ -1,0 +1,90 @@
+<mxfile host="app.diagrams.net" agent="Claude" version="22.1.0">
+  <diagram id="global-compare" name="Global Compare Index">
+    <mxGraphModel dx="800" dy="550" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="480" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="BuildGlobalIndex — Cross-File Comparison O(n*m)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="120" y="20" width="460" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Input files -->
+        <mxCell id="f1" value="file1.xbrl" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="30" y="80" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" value="file2.xbrl" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="140" y="80" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="fdots" value="..." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="250" y="80" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="fn" value="fileN.xbrl" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="300" y="80" width="90" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Key generation -->
+        <mxCell id="keygen" value="Fact Key = ConceptName | ContextSignature&#xa;(not Id|ContextRef — those are file-internal)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="80" y="140" width="300" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Index -->
+        <mxCell id="index" value="Global Index&#xa;Dictionary&lt;factKey, Dictionary&lt;fileName, Fact&gt;&gt;" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="210" width="300" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Arrows to index -->
+        <mxCell id="a_f1" value="" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="f1" target="keygen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_f2" value="" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="f2" target="keygen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_fn" value="" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="fn" target="keygen">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_key_idx" value="" style="endArrow=classic;html=1;strokeColor=#333333;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="keygen" target="index">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Classification -->
+        <mxCell id="consistent" value="Consistent&#xa;(same value in all N files)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="30" y="300" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="modified" value="Modified&#xa;(present in all, values differ)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="220" y="300" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="partial" value="Partial&#xa;(missing from some files)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="410" y="300" width="170" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Classification arrows -->
+        <mxCell id="a_con" value="" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="index" target="consistent">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_mod" value="" style="endArrow=classic;html=1;strokeColor=#333333;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="index" target="modified">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_par" value="" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="index" target="partial">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Context signature note -->
+        <mxCell id="note_sig" value="ContextSignature = Entity + Period + Scenario&#xa;(semantic identity, not context ID)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="420" y="140" width="250" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Complexity note -->
+        <mxCell id="note_perf" value="Single pass over all files: O(n * m)&#xa;n = files, m = avg facts per file" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="420" y="210" width="250" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Result note -->
+        <mxCell id="note_result" value="GlobalComparisonResult groups all facts into these 3 categories" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="80" y="360" width="500" height="25" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

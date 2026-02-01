@@ -27,21 +27,21 @@
 
         <!-- Commands -->
         <mxCell id="cmd1" value="Find&#xa;Duplicates" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="40" y="240" width="80" height="40" as="geometry" />
+          <mxGeometry x="30" y="240" width="90" height="40" as="geometry" />
         </mxCell>
         <mxCell id="cmd2" value="Merge&#xa;Reports" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="140" y="240" width="80" height="40" as="geometry" />
+          <mxGeometry x="140" y="240" width="90" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="cmd3" value="Compare&#xa;Reports" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="240" y="240" width="80" height="40" as="geometry" />
+        <mxCell id="cmd3" value="Global&#xa;Compare" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="250" y="240" width="90" height="40" as="geometry" />
         </mxCell>
         <mxCell id="cmd4" value="Execute&#xa;XPath" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="340" y="240" width="80" height="40" as="geometry" />
+          <mxGeometry x="360" y="240" width="90" height="40" as="geometry" />
         </mxCell>
 
         <!-- Services -->
-        <mxCell id="service" value="Services&#xa;(Analyzer, Merger, Parser, XPath)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="440" y="160" width="170" height="40" as="geometry" />
+        <mxCell id="service" value="Services (DI)&#xa;(Analyzer, Merger, Serializer, XPathQueries)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="440" y="160" width="180" height="40" as="geometry" />
         </mxCell>
 
         <!-- Arrows -->
@@ -74,11 +74,6 @@
             <mxPoint x="320" y="180" as="sourcePoint" />
             <mxPoint x="440" y="180" as="targetPoint" />
           </mxGeometry>
-        </mxCell>
-
-        <!-- Note -->
-        <mxCell id="note" value="Pattern: Encapsulates requests as objects, allowing parameterization and queuing&#xa;Benefits: Decouples invoker from concrete commands, easy to add new commands" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;fontSize=10;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="40" y="300" width="570" height="35" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

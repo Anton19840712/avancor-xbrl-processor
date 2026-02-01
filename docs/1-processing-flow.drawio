@@ -1,42 +1,46 @@
 <mxfile host="app.diagrams.net" agent="Claude" version="22.1.0">
   <diagram id="processing-flow" name="Processing Flow">
-    <mxGraphModel dx="800" dy="500" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="600" pageHeight="500" math="0" shadow="0">
+    <mxGraphModel dx="900" dy="580" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="600" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
 
         <!-- Title -->
         <mxCell id="title" value="XBRL Processing Flow" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="200" y="20" width="200" height="30" as="geometry" />
+          <mxGeometry x="220" y="20" width="260" height="30" as="geometry" />
         </mxCell>
 
         <!-- Steps -->
         <mxCell id="step1" value="1. Load Configuration&#xa;(appsettings.json)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="220" y="70" width="160" height="40" as="geometry" />
+          <mxGeometry x="230" y="70" width="180" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="step2" value="2. Parse XBRL Files&#xa;(report1.xbrl, report2.xbrl)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="220" y="130" width="160" height="40" as="geometry" />
+        <mxCell id="step2" value="2. Discover XBRL Files&#xa;(Reports/*.xbrl)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="230" y="130" width="180" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="step3" value="3. Find Duplicate Contexts&#xa;(Task 1)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="220" y="190" width="160" height="40" as="geometry" />
+        <mxCell id="step3" value="3. Parse Files&#xa;(parallel batches, ParserMode)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="230" y="190" width="180" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="step4" value="4. Merge Reports&#xa;(Task 2)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="220" y="250" width="160" height="40" as="geometry" />
+        <mxCell id="step4" value="4. Find Duplicate Contexts&#xa;(Task 1)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="230" y="260" width="180" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="step5" value="5. Compare Reports&#xa;(Task 3)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="220" y="310" width="160" height="40" as="geometry" />
+        <mxCell id="step5" value="5. Merge Reports&#xa;(Task 2)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="230" y="320" width="180" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="step6" value="6. Execute XPath Queries&#xa;(Task 4)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="220" y="370" width="160" height="40" as="geometry" />
+        <mxCell id="step6" value="6. Global Compare&#xa;(Task 3 — BuildGlobalIndex)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="230" y="380" width="180" height="40" as="geometry" />
         </mxCell>
 
-        <mxCell id="step7" value="7. Output Results" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
-          <mxGeometry x="220" y="430" width="160" height="40" as="geometry" />
+        <mxCell id="step7" value="7. Execute XPath Queries&#xa;(Task 4 — all files)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="230" y="440" width="180" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="step8" value="8. Output Metrics" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=10;fontColor=#333333;" vertex="1" parent="1">
+          <mxGeometry x="230" y="500" width="180" height="40" as="geometry" />
         </mxCell>
 
         <!-- Arrows -->
@@ -58,22 +62,25 @@
         <mxCell id="arrow6" value="" style="endArrow=classic;html=1;strokeColor=#333333;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="step6" target="step7">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="arrow7" value="" style="endArrow=classic;html=1;strokeColor=#333333;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" edge="1" parent="1" source="step7" target="step8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
 
         <!-- Side notes -->
-        <mxCell id="note1" value="XbrlParser&#xa;InstanceBuilder" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="400" y="135" width="100" height="30" as="geometry" />
+        <mxCell id="note1" value="ParserMode: XDocument | Streaming&#xa;Parallelism: 0=CPU, 1=seq, N=threads&#xa;BatchSize: 0=all, N=per batch" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="430" y="185" width="220" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="note2" value="XbrlAnalyzer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="400" y="198" width="100" height="20" as="geometry" />
+        <mxCell id="note2" value="XbrlAnalyzer&#xa;ContextSignatureHelper" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="430" y="265" width="140" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="note3" value="XbrlMerger" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="400" y="258" width="100" height="20" as="geometry" />
+        <mxCell id="note3" value="XbrlMerger&#xa;XbrlSerializer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="430" y="325" width="100" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="note4" value="XbrlAnalyzer" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="400" y="318" width="100" height="20" as="geometry" />
+        <mxCell id="note4" value="XbrlAnalyzer.BuildGlobalIndex()&#xa;O(n*m) single-pass" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="430" y="385" width="190" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="note5" value="XPathQueries" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
-          <mxGeometry x="400" y="378" width="100" height="20" as="geometry" />
+        <mxCell id="note5" value="XPathQueries&#xa;(on all files)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontColor=#999999;" vertex="1" parent="1">
+          <mxGeometry x="430" y="445" width="100" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
