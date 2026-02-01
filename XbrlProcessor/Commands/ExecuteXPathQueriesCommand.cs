@@ -4,11 +4,11 @@ using XbrlProcessor.Services;
 namespace XbrlProcessor.Commands;
 
 /// <summary>
-/// Команда для выполнения XPath запросов к XBRL файлу
+/// Команда для выполнения XPath запросов ко всем XBRL файлам
 /// </summary>
-/// <param name="reportPath">Путь к файлу отчета</param>
+/// <param name="reportPaths">Пути к файлам отчетов</param>
 /// <param name="settings">Настройки приложения</param>
-public class ExecuteXPathQueriesCommand(string reportPath, XbrlSettings settings) : IXbrlCommand
+public class ExecuteXPathQueriesCommand(IReadOnlyList<string> reportPaths, XbrlSettings settings) : IXbrlCommand
 {
     #region IXbrlCommand Implementation
 
@@ -19,13 +19,16 @@ public class ExecuteXPathQueriesCommand(string reportPath, XbrlSettings settings
         var xpathQueries = new XPathQueries(settings);
         xpathQueries.PrintAllQueries();
 
-        Console.WriteLine("\nВыполнение XPath запросов на report1.xbrl:");
-        xpathQueries.ExecuteQueries(reportPath);
+        foreach (var reportPath in reportPaths)
+        {
+            Console.WriteLine($"\n--- {Path.GetFileName(reportPath)} ---");
+            xpathQueries.ExecuteQueries(reportPath);
+        }
     }
 
     public string GetName() => "ExecuteXPathQueries";
 
-    public string GetDescription() => "Выполнение XPath запросов к XBRL файлу";
+    public string GetDescription() => "Выполнение XPath запросов ко всем XBRL файлам";
 
     #endregion
 }

@@ -14,12 +14,22 @@ public class XbrlMerger(XbrlSettings settings)
     /// Объединяет два отчета в один, удаляя дубликаты контекстов, единиц и фактов
     /// </summary>
     public Instance MergeInstances(Instance instance1, Instance instance2)
+        => MergeInstances([instance1, instance2]);
+
+    /// <summary>
+    /// Объединяет произвольное количество отчетов в один, удаляя дубликаты
+    /// </summary>
+    public Instance MergeInstances(IReadOnlyList<Instance> instances)
     {
         var builder = new InstanceBuilder();
 
+        var allContexts = instances.SelectMany(i => i.Contexts);
+        var allUnits = instances.SelectMany(i => i.Units);
+        var allFacts = instances.SelectMany(i => i.Facts);
+
         // Объединяем контексты (удаляем дубликаты)
         var contextMap = new Dictionary<string, Context>();
-        foreach (var context in instance1.Contexts.Concat(instance2.Contexts))
+        foreach (var context in allContexts)
         {
             var signature = ContextSignatureHelper.GetSignature(context, settings);
             if (!contextMap.ContainsKey(signature))
@@ -31,7 +41,7 @@ public class XbrlMerger(XbrlSettings settings)
 
         // Объединяем единицы измерения (удаляем дубликаты)
         var unitMap = new Dictionary<string, Unit>();
-        foreach (var unit in instance1.Units.Concat(instance2.Units))
+        foreach (var unit in allUnits)
         {
             var signature = GetUnitSignature(unit);
             if (!unitMap.ContainsKey(signature))
@@ -43,7 +53,7 @@ public class XbrlMerger(XbrlSettings settings)
 
         // Объединяем факты
         var factMap = new Dictionary<string, Fact>();
-        foreach (var fact in instance1.Facts.Concat(instance2.Facts))
+        foreach (var fact in allFacts)
         {
             var key = $"{fact.Id}|{fact.ContextRef}|{fact.UnitRef}";
             if (!factMap.ContainsKey(key))
