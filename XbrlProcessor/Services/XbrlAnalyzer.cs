@@ -30,66 +30,72 @@ public class XbrlAnalyzer(XbrlSettings settings)
     }
 
     /// <summary>
-    /// Сравнивает два отчета и выявляет различия в фактах
+    /// Строит глобальный индекс по N отчетам за один проход — O(n*m).
+    /// Ключ факта: ConceptName + сигнатура контекста (не Id + ContextRef,
+    /// т.к. Id и ContextRef уникальны внутри файла и не совпадают между файлами).
     /// </summary>
-    /// <param name="instance1">Первый отчет для сравнения</param>
-    /// <param name="instance2">Второй отчет для сравнения</param>
-    /// <returns>Результат сравнения с отсутствующими, новыми и измененными фактами</returns>
-    public ComparisonResult CompareInstances(Instance instance1, Instance instance2)
+    /// <param name="reports">Список (имя файла, экземпляр)</param>
+    public GlobalComparisonResult BuildGlobalIndex(IReadOnlyList<(string Name, Instance Instance)> reports)
     {
-        // Создаем словари для быстрого поиска
-        var facts1 = instance1.Facts.ToDictionary(f => GetFactKey(f), f => f);
-        var facts2 = instance2.Facts.ToDictionary(f => GetFactKey(f), f => f);
+        var index = new Dictionary<string, Dictionary<string, Fact>>();
 
-        var missingFacts = new List<Fact>();
-        var newFacts = new List<Fact>();
-        var modifiedFacts = new List<FactDifference>();
-
-        // Факты, отсутствующие в report2
-        foreach (var kvp in facts1)
+        foreach (var (name, instance) in reports)
         {
-            if (!facts2.ContainsKey(kvp.Key))
-            {
-                missingFacts.Add(kvp.Value);
-            }
-        }
+            // Строим маппинг contextId → сигнатура для данного файла
+            var contextSignatures = instance.Contexts.ToDictionary(
+                c => c.Id,
+                c => ContextSignatureHelper.GetSignature(c, settings));
 
-        // Новые факты в report2
-        foreach (var kvp in facts2)
-        {
-            if (!facts1.ContainsKey(kvp.Key))
+            foreach (var fact in instance.Facts)
             {
-                newFacts.Add(kvp.Value);
-            }
-        }
-
-        // Факты с различающимися значениями
-        foreach (var kvp in facts1)
-        {
-            if (facts2.TryGetValue(kvp.Key, out var fact2))
-            {
-                if (!kvp.Value.Value.SemanticallyEquals(fact2.Value))
+                var key = GetCrossFileFactKey(fact, contextSignatures);
+                if (!index.TryGetValue(key, out var fileMap))
                 {
-                    modifiedFacts.Add(new FactDifference
-                    {
-                        FactKey = kvp.Key,
-                        Fact1 = kvp.Value,
-                        Fact2 = fact2
-                    });
+                    fileMap = new Dictionary<string, Fact>();
+                    index[key] = fileMap;
                 }
+                fileMap.TryAdd(name, fact);
             }
         }
 
-        return new ComparisonResult
+        var totalFiles = reports.Count;
+        var consistent = new List<FactIndexEntry>();
+        var modified = new List<FactIndexEntry>();
+        var partial = new List<FactIndexEntry>();
+
+        foreach (var (key, fileMap) in index)
         {
-            MissingFacts = missingFacts,
-            NewFacts = newFacts,
-            ModifiedFacts = modifiedFacts
+            var entry = new FactIndexEntry { FactKey = key, ValuesByFile = fileMap };
+
+            if (entry.FileCount < totalFiles)
+                partial.Add(entry);
+            else if (entry.IsConsistent)
+                consistent.Add(entry);
+            else
+                modified.Add(entry);
+        }
+
+        return new GlobalComparisonResult
+        {
+            TotalFiles = totalFiles,
+            TotalUniqueFactKeys = index.Count,
+            ConsistentFacts = consistent,
+            ModifiedFacts = modified,
+            PartialFacts = partial
         };
     }
 
-    private static string GetFactKey(Fact fact)
+    /// <summary>
+    /// Ключ факта для кросс-файлового сравнения (ConceptName|ContextSignature).
+    /// ConceptName — имя XML-элемента (концепт таксономии), одинаковый для одного показателя во всех файлах.
+    /// ContextSignature — семантическая сигнатура контекста (entity+period+scenario), а не ID.
+    /// </summary>
+    private static string GetCrossFileFactKey(Fact fact, Dictionary<string, string> contextSignatures)
     {
-        return $"{fact.Id}|{fact.ContextRef}";
+        var conceptName = fact.ConceptName ?? fact.Id;
+        var contextSig = fact.ContextRef != null && contextSignatures.TryGetValue(fact.ContextRef, out var sig)
+            ? sig
+            : fact.ContextRef ?? "";
+        return $"{conceptName}|{contextSig}";
     }
 }
