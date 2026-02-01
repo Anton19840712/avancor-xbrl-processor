@@ -163,13 +163,15 @@ public class XbrlParserTests
     {
         // Arrange
         var reportsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", "XbrlProcessor", "Reports");
-        var filePath = Path.Combine(reportsPath, "report1.xbrl");
+        var files = Directory.GetFiles(reportsPath, "*.xbrl");
 
-        if (!File.Exists(filePath))
+        if (files.Length == 0)
         {
-            // Skip test if report file doesn't exist
+            // Skip test if no report files exist
             return;
         }
+
+        var filePath = files.Order().First();
 
         // Act
         var instance = _parser.ParseXbrlFile(filePath);
