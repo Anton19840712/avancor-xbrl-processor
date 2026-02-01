@@ -184,9 +184,15 @@ public class XbrlParser(XbrlSettings settings)
 
     private static Fact ParseFact(XElement element)
     {
+        var prefix = element.GetPrefixOfNamespace(element.Name.Namespace);
+        var conceptName = string.IsNullOrEmpty(prefix)
+            ? element.Name.LocalName
+            : $"{prefix}:{element.Name.LocalName}";
+
         var fact = new Fact
         {
             Id = element.Attribute("id")?.Value ?? element.Name.LocalName,
+            ConceptName = conceptName,
             ContextRef = element.Attribute("contextRef")?.Value,
             UnitRef = element.Attribute("unitRef")?.Value,
             Value = XbrlValue.Parse(element.Value)

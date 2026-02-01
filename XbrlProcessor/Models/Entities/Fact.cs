@@ -12,6 +12,9 @@ public class Fact
     /// <see>xbrli:unit/[@id]</see>
     public required string Id { get; set; }
 
+    /// <summary>Имя концепта (qualified XML element name, например "purcb-dic:Kod_Okato3")</summary>
+    public string? ConceptName { get; set; }
+
     /// <summary>Ссылка на контекст</summary>
     /// <see>xbrli:unit/[@contextRef]</see>
     public virtual string? ContextRef { get; set; }
