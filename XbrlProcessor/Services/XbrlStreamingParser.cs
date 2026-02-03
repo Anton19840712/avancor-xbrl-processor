@@ -1,16 +1,13 @@
 using System.Globalization;
 using System.Xml;
-using System.Xml.Linq;
 using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Configuration;
-using XbrlProcessor.Builders;
 
 namespace XbrlProcessor.Services;
 
 /// <summary>
-/// Потоковый парсер XBRL на базе XmlReader — не загружает весь документ в память.
-/// Для каждого элемента (context, unit, fact) считывает поддерево через XElement.ReadFrom,
-/// что позволяет переиспользовать логику парсинга из XbrlParser.
+/// Потоковый парсер XBRL — читает атрибуты и значения напрямую из XmlReader,
+/// без промежуточных XElement-аллокаций (кроме segment, который сохраняется как XML-строка через ReadOuterXml).
 /// </summary>
 /// <param name="settings">Настройки приложения</param>
 public class XbrlStreamingParser(XbrlSettings settings)
@@ -26,7 +23,7 @@ public class XbrlStreamingParser(XbrlSettings settings)
         if (!File.Exists(filePath))
             throw new FileNotFoundException($"File not found: {filePath}", filePath);
 
-        var builder = new InstanceBuilder();
+        var instance = new Instance();
 
         using var reader = XmlReader.Create(filePath, new XmlReaderSettings
         {
@@ -34,9 +31,8 @@ public class XbrlStreamingParser(XbrlSettings settings)
             IgnoreComments = true
         });
 
-        // XNode.ReadFrom продвигает reader за прочитанный элемент,
-        // поэтому после него нельзя вызывать reader.Read() — иначе пропустим следующий элемент.
-        // Флаг consumed отслеживает, был ли текущий узел уже обработан через ReadFrom.
+        // consumed отслеживает, был ли текущий узел уже обработан через ReadElementContentAsString/ReadSubtree,
+        // которые продвигают reader за прочитанный элемент.
         var consumed = false;
 
         while (consumed || reader.Read())
@@ -51,12 +47,14 @@ public class XbrlStreamingParser(XbrlSettings settings)
                 switch (reader.LocalName)
                 {
                     case "context":
-                        builder.AddContext(ParseContext(reader, filePath));
-                        consumed = true;
+                        var ctxEmpty = reader.IsEmptyElement;
+                        instance.Contexts.Add(ParseContext(reader, filePath));
+                        consumed = !ctxEmpty;
                         continue;
                     case "unit":
-                        builder.AddUnit(ParseUnit(reader, filePath));
-                        consumed = true;
+                        var unitEmpty = reader.IsEmptyElement;
+                        instance.Units.Add(ParseUnit(reader, filePath));
+                        consumed = !unitEmpty;
                         continue;
                 }
             }
@@ -66,98 +64,127 @@ public class XbrlStreamingParser(XbrlSettings settings)
                 && reader.LocalName != "schemaRef"
                 && reader.GetAttribute("contextRef") != null)
             {
-                builder.AddFact(ParseFact(reader));
+                instance.Facts.Add(ParseFact(reader));
                 consumed = true;
             }
         }
 
-        return builder.Build();
+        return instance;
     }
 
     private Context ParseContext(XmlReader reader, string filePath)
     {
-        // Считываем поддерево в XElement для удобного парсинга вложенных элементов
-        var element = (XElement)XNode.ReadFrom(reader);
-        XNamespace xbrli = _xbrliNs;
-        XNamespace xbrldi = _xbrldiNs;
-
-        var contextId = element.Attribute("id")?.Value;
+        var contextId = reader.GetAttribute("id");
         if (string.IsNullOrEmpty(contextId))
             throw new XbrlParseException(filePath, "Context element is missing required 'id' attribute.");
 
         var context = new Context { Id = contextId };
 
-        var entity = element.Element(xbrli + "entity");
-        if (entity != null)
+        if (reader.IsEmptyElement)
+            return context;
+
+        // ReadSubtree создаёт обёртку над тем же XmlReader, ограниченную текущим поддеревом.
+        // После Dispose оригинальный reader стоит на EndElement контекста.
+        using (var sub = reader.ReadSubtree())
         {
-            var identifier = entity.Element(xbrli + "identifier");
-            context.EntityValue = identifier?.Value;
-            context.EntityScheme = identifier?.Attribute("scheme")?.Value;
-            context.EntitySegment = entity.Element(xbrli + "segment")?.ToString();
-        }
+            sub.Read(); // встать на <context>
+            var subConsumed = false;
 
-        var period = element.Element(xbrli + "period");
-        if (period != null)
-        {
-            var instant = period.Element(xbrli + "instant");
-            if (instant != null)
-                context.PeriodInstant = ParseDate(instant.Value, filePath, $"Context '{contextId}', element 'instant'");
-
-            var startDate = period.Element(xbrli + "startDate");
-            if (startDate != null)
-                context.PeriodStartDate = ParseDate(startDate.Value, filePath, $"Context '{contextId}', element 'startDate'");
-
-            var endDate = period.Element(xbrli + "endDate");
-            if (endDate != null)
-                context.PeriodEndDate = ParseDate(endDate.Value, filePath, $"Context '{contextId}', element 'endDate'");
-
-            if (period.Element(xbrli + "forever") != null)
-                context.PeriodForever = true;
-        }
-
-        var scenario = element.Element(xbrli + "scenario");
-        if (scenario != null)
-        {
-            foreach (var member in scenario.Elements())
+            while (subConsumed || sub.Read())
             {
-                var dimensionType = DimensionTypeExtensions.FromXmlName(member.Name.LocalName);
-                var dimensionName = member.Attribute("dimension")?.Value;
-                string? dimensionCode = null;
-                string? dimensionValue = null;
+                subConsumed = false;
 
-                if (dimensionType == DimensionType.ExplicitMember)
+                if (sub.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (sub.NamespaceURI == _xbrliNs)
                 {
-                    dimensionValue = member.Value;
-                }
-                else if (dimensionType == DimensionType.TypedMember)
-                {
-                    var child = member.Elements().FirstOrDefault();
-                    if (child != null)
+                    switch (sub.LocalName)
                     {
-                        dimensionCode = child.Name.LocalName;
-                        dimensionValue = child.Value;
+                        case "identifier":
+                            context.EntityScheme = Intern(sub.GetAttribute("scheme"));
+                            if (!sub.IsEmptyElement)
+                            {
+                                context.EntityValue = sub.ReadElementContentAsString();
+                                subConsumed = true;
+                            }
+                            break;
+                        case "segment":
+                            context.EntitySegment = sub.ReadOuterXml();
+                            subConsumed = true;
+                            break;
+                        case "instant":
+                            context.PeriodInstant = ParseDate(sub.ReadElementContentAsString(), filePath,
+                                $"Context '{contextId}', element 'instant'");
+                            subConsumed = true;
+                            break;
+                        case "startDate":
+                            context.PeriodStartDate = ParseDate(sub.ReadElementContentAsString(), filePath,
+                                $"Context '{contextId}', element 'startDate'");
+                            subConsumed = true;
+                            break;
+                        case "endDate":
+                            context.PeriodEndDate = ParseDate(sub.ReadElementContentAsString(), filePath,
+                                $"Context '{contextId}', element 'endDate'");
+                            subConsumed = true;
+                            break;
+                        case "forever":
+                            context.PeriodForever = true;
+                            break;
                     }
                 }
-
-                context.Scenarios.Add(new Scenario
+                else if (sub.NamespaceURI == _xbrldiNs)
                 {
-                    DimensionType = dimensionType,
-                    DimensionName = dimensionName,
-                    DimensionCode = dimensionCode,
-                    DimensionValue = dimensionValue
-                });
+                    ReadScenarioMember(sub, context);
+                    subConsumed = true;
+                }
             }
         }
 
         return context;
     }
 
+    private static void ReadScenarioMember(XmlReader reader, Context context)
+    {
+        var dimensionType = DimensionTypeExtensions.FromXmlName(reader.LocalName);
+        var dimensionName = Intern(reader.GetAttribute("dimension"));
+        string? dimensionCode = null;
+        string? dimensionValue = null;
+
+        if (dimensionType == DimensionType.ExplicitMember)
+        {
+            if (!reader.IsEmptyElement)
+                dimensionValue = reader.ReadElementContentAsString();
+        }
+        else if (dimensionType == DimensionType.TypedMember && !reader.IsEmptyElement)
+        {
+            // Читаем первый дочерний элемент typedMember
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    dimensionCode = reader.LocalName;
+                    if (!reader.IsEmptyElement)
+                        dimensionValue = reader.ReadElementContentAsString();
+                    break;
+                }
+                if (reader.NodeType == XmlNodeType.EndElement)
+                    break;
+            }
+        }
+
+        context.Scenarios.Add(new Scenario
+        {
+            DimensionType = dimensionType,
+            DimensionName = dimensionName,
+            DimensionCode = dimensionCode,
+            DimensionValue = dimensionValue
+        });
+    }
+
     private Unit ParseUnit(XmlReader reader, string filePath)
     {
-        var element = (XElement)XNode.ReadFrom(reader);
-        XNamespace xbrli = _xbrliNs;
-
-        var id = element.Attribute("id")?.Value;
+        var id = reader.GetAttribute("id");
         if (string.IsNullOrEmpty(id))
             throw new XbrlParseException(filePath, "Unit element is missing required 'id' attribute.");
 
@@ -165,15 +192,40 @@ public class XbrlStreamingParser(XbrlSettings settings)
         string? numerator = null;
         string? denominator = null;
 
-        var measureElement = element.Element(xbrli + "measure");
-        if (measureElement != null)
-            measure = measureElement.Value;
-
-        var divide = element.Element(xbrli + "divide");
-        if (divide != null)
+        if (!reader.IsEmptyElement)
         {
-            numerator = divide.Element(xbrli + "unitNumerator")?.Element(xbrli + "measure")?.Value;
-            denominator = divide.Element(xbrli + "unitDenominator")?.Element(xbrli + "measure")?.Value;
+            using (var sub = reader.ReadSubtree())
+            {
+                sub.Read(); // встать на <unit>
+
+                // section: 0 = top level, 1 = unitNumerator, 2 = unitDenominator
+                var section = 0;
+
+                while (sub.Read())
+                {
+                    if (sub.NodeType != XmlNodeType.Element || sub.NamespaceURI != _xbrliNs)
+                        continue;
+
+                    switch (sub.LocalName)
+                    {
+                        case "unitNumerator":
+                            section = 1;
+                            break;
+                        case "unitDenominator":
+                            section = 2;
+                            break;
+                        case "measure":
+                            var val = sub.ReadElementContentAsString();
+                            switch (section)
+                            {
+                                case 1: numerator = val; break;
+                                case 2: denominator = val; break;
+                                default: measure = val; break;
+                            }
+                            break;
+                    }
+                }
+            }
         }
 
         return new Unit
@@ -187,39 +239,41 @@ public class XbrlStreamingParser(XbrlSettings settings)
 
     private static Fact ParseFact(XmlReader reader)
     {
-        // Захватываем prefix из XmlReader до ReadFrom, т.к. XElement
-        // из ReadFrom не наследует namespace declarations корневого элемента
-        var readerPrefix = reader.Prefix;
+        var prefix = reader.Prefix;
         var localName = reader.LocalName;
-
-        var element = (XElement)XNode.ReadFrom(reader);
-
-        var prefix = !string.IsNullOrEmpty(readerPrefix)
-            ? readerPrefix
-            : element.GetPrefixOfNamespace(element.Name.Namespace);
         var conceptName = string.IsNullOrEmpty(prefix)
             ? localName
             : $"{prefix}:{localName}";
 
+        var id = reader.GetAttribute("id") ?? localName;
+        var contextRef = reader.GetAttribute("contextRef");
+        var unitRef = reader.GetAttribute("unitRef");
+        var decimalsStr = reader.GetAttribute("decimals");
+        var precisionStr = reader.GetAttribute("precision");
+
+        // ReadElementContentAsString работает и для пустых элементов (<tag/>),
+        // возвращая "" и продвигая reader за элемент.
+        var value = reader.ReadElementContentAsString();
+
         var fact = new Fact
         {
-            Id = element.Attribute("id")?.Value ?? element.Name.LocalName,
-            ConceptName = conceptName,
-            ContextRef = element.Attribute("contextRef")?.Value,
-            UnitRef = element.Attribute("unitRef")?.Value,
-            Value = XbrlValue.Parse(element.Value)
+            Id = id,
+            ConceptName = Intern(conceptName),
+            ContextRef = contextRef,
+            UnitRef = Intern(unitRef),
+            Value = XbrlValue.Parse(value)
         };
 
-        var decimals = element.Attribute("decimals")?.Value;
-        if (decimals != null && int.TryParse(decimals, out int d))
+        if (decimalsStr != null && int.TryParse(decimalsStr, out int d))
             fact.Decimals = d;
-
-        var precision = element.Attribute("precision")?.Value;
-        if (precision != null && int.TryParse(precision, out int p))
+        if (precisionStr != null && int.TryParse(precisionStr, out int p))
             fact.Precision = p;
 
         return fact;
     }
+
+    private static string? Intern(string? value)
+        => value is null ? null : string.Intern(value);
 
     private static DateTime ParseDate(string value, string filePath, string location)
     {
