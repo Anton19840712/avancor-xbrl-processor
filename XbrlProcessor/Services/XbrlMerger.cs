@@ -1,6 +1,5 @@
 using XbrlProcessor.Models.Entities;
 using XbrlProcessor.Configuration;
-using XbrlProcessor.Builders;
 
 namespace XbrlProcessor.Services;
 
@@ -21,53 +20,43 @@ public class XbrlMerger(XbrlSettings settings)
     /// </summary>
     public Instance MergeInstances(IReadOnlyList<Instance> instances)
     {
-        var builder = new InstanceBuilder();
+        var result = new Instance();
 
-        var allContexts = instances.SelectMany(i => i.Contexts);
-        var allUnits = instances.SelectMany(i => i.Units);
-        var allFacts = instances.SelectMany(i => i.Facts);
+        var totalContexts = instances.Sum(i => i.Contexts.Count);
+        var totalUnits = instances.Sum(i => i.Units.Count);
+        var totalFacts = instances.Sum(i => i.Facts.Count);
 
-        // Объединяем контексты (удаляем дубликаты)
-        var contextMap = new Dictionary<string, Context>();
-        foreach (var context in allContexts)
+        var contextMap = new Dictionary<string, Context>(totalContexts);
+        foreach (var instance in instances)
         {
-            var signature = ContextSignatureHelper.GetSignature(context, settings);
-            if (!contextMap.ContainsKey(signature))
+            foreach (var context in instance.Contexts)
             {
-                contextMap[signature] = context;
-                builder.AddContext(context);
+                var signature = ContextSignatureHelper.GetSignature(context, settings);
+                if (contextMap.TryAdd(signature, context))
+                    result.Contexts.Add(context);
             }
         }
 
-        // Объединяем единицы измерения (удаляем дубликаты)
-        var unitMap = new Dictionary<string, Unit>();
-        foreach (var unit in allUnits)
+        var unitSet = new HashSet<(string?, string?, string?)>(totalUnits);
+        foreach (var instance in instances)
         {
-            var signature = GetUnitSignature(unit);
-            if (!unitMap.ContainsKey(signature))
+            foreach (var unit in instance.Units)
             {
-                unitMap[signature] = unit;
-                builder.AddUnit(unit);
+                if (unitSet.Add((unit.Measure, unit.Numerator, unit.Denominator)))
+                    result.Units.Add(unit);
             }
         }
 
-        // Объединяем факты
-        var factMap = new Dictionary<string, Fact>();
-        foreach (var fact in allFacts)
+        var factSet = new HashSet<(string?, string?, string?)>(totalFacts);
+        foreach (var instance in instances)
         {
-            var key = $"{fact.Id}|{fact.ContextRef}|{fact.UnitRef}";
-            if (!factMap.ContainsKey(key))
+            foreach (var fact in instance.Facts)
             {
-                factMap[key] = fact;
-                builder.AddFact(fact);
+                if (factSet.Add((fact.Id, fact.ContextRef, fact.UnitRef)))
+                    result.Facts.Add(fact);
             }
         }
 
-        return builder.Build();
-    }
-
-    private static string GetUnitSignature(Unit unit)
-    {
-        return $"{unit.Measure}|{unit.Numerator}|{unit.Denominator}";
+        return result;
     }
 }
