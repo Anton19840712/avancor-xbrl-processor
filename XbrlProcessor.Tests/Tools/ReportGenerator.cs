@@ -169,6 +169,40 @@ public class ReportGenerator
         }
     }
 
+    [Fact]
+    public void GenerateMillionRecordReports()
+    {
+        var reportsDir = Path.Combine(
+            Directory.GetCurrentDirectory(), "..", "..", "..", "..",
+            "XbrlProcessor", "Reports-Large");
+
+        Directory.CreateDirectory(reportsDir);
+
+        // 10 файлов × 10K контекстов × 100K фактов
+        var configs = new[]
+        {
+            (Files: 10, Contexts: 10_000, Facts: 100_000, Prefix: "large"),
+            // Uncomment for full million-record test:
+            // (Files: 10, Contexts: 100_000, Facts: 1_000_000, Prefix: "million"),
+        };
+
+        foreach (var cfg in configs)
+        {
+            for (var i = 0; i < cfg.Files; i++)
+            {
+                var doc = GenerateReport(i + 1, cfg.Contexts, cfg.Facts);
+                var filePath = Path.Combine(reportsDir, $"{cfg.Prefix}_{i + 1:D3}.xbrl");
+                doc.Save(filePath);
+
+                var size = new FileInfo(filePath).Length;
+                Assert.True(size > 0, $"File {filePath} is empty");
+            }
+        }
+
+        var files = Directory.GetFiles(reportsDir, "*.xbrl");
+        Assert.True(files.Length >= 10);
+    }
+
     private static (int contexts, int facts) GetSizeParams(int index)
     {
         return index switch
