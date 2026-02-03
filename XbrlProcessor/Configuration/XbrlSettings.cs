@@ -46,11 +46,6 @@ public class XbrlSettings
         public XmlNamespacesSettings XmlNamespaces { get; set; } = new();
 
         /// <summary>
-        /// Настройки XPath запросов
-        /// </summary>
-        public XPathQueriesSettings XPathQueries { get; set; } = new();
-
-        /// <summary>
         /// Получить пути ко всем файлам отчетов (исключая merged)
         /// </summary>
         public string[] GetReportPaths()
@@ -105,58 +100,13 @@ public class XbrlSettings
     }
 
     /// <summary>
-    /// Режим парсера XML
-    /// </summary>
-    public enum ParserMode
-    {
-        /// <summary>XDocument — загружает весь файл в память</summary>
-        XDocument,
-
-        /// <summary>Потоковый XmlReader — не загружает весь файл в память</summary>
-        Streaming
-    }
-
-    /// <summary>
-    /// Настройки обработки отчетов (параллелизм, режим парсера)
+    /// Настройки обработки отчетов (параллелизм)
     /// </summary>
     public record ProcessingSettings
     {
         /// <summary>
-        /// Степень параллелизма при загрузке/парсинге файлов.
+        /// Степень параллелизма при обработке файлов.
         /// 1 = последовательно, >1 = параллельно, 0 = Environment.ProcessorCount.
         /// </summary>
         public int MaxDegreeOfParallelism { get; init; } = 1;
-
-        /// <summary>
-        /// Режим парсера XML
-        /// </summary>
-        public ParserMode ParserMode { get; init; } = ParserMode.Streaming;
-
-        /// <summary>
-        /// Размер батча при пакетной обработке файлов.
-        /// Актуален при большом количестве файлов — обрабатываются пачками по BatchSize.
-        /// 0 = обработать все разом.
-        /// </summary>
-        public int BatchSize { get; init; } = 0;
-    }
-
-    /// <summary>
-    /// Настройки XPath запросов для поиска контекстов
-    /// </summary>
-    public record XPathQueriesSettings
-    {
-        /// <summary>
-        /// XPath запрос для поиска контекстов с периодом instant = "2019-04-30"
-        /// </summary>
-        public string ContextsWithInstant { get; init; } = "//xbrli:context[xbrli:period/xbrli:instant='2019-04-30']/@id";
-
-        /// <summary>
-        /// XPath запрос для поиска контекстов со сценарием dimension="dim-int:ID_sobstv_CZBTaxis"
-        /// </summary>
-        public string ContextsWithDimension { get; init; } = "//xbrli:context[xbrli:scenario/xbrldi:typedMember[@dimension='dim-int:ID_sobstv_CZBTaxis']]/@id";
-
-        /// <summary>
-        /// XPath запрос для поиска контекстов без сценария
-        /// </summary>
-        public string ContextsWithoutScenario { get; init; } = "//xbrli:context[not(xbrli:scenario)]/@id";
     }

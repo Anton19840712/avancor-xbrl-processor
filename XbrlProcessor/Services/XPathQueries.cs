@@ -1,75 +1,53 @@
-using System.Xml.Linq;
-using System.Xml.XPath;
-using XbrlProcessor.Configuration;
+using XbrlProcessor.Models.Entities;
 
 namespace XbrlProcessor.Services;
 
 /// <summary>
-/// Сервис для выполнения XPath запросов к XBRL файлам
+/// Сервис для выполнения запросов к XBRL данным как C# фильтры на распарсенном Instance.
 /// </summary>
-/// <param name="settings">Настройки приложения</param>
-public class XPathQueries(XbrlSettings settings)
+public class XPathQueries
 {
-    private readonly XNamespace _xbrli = settings.XmlNamespaces.Xbrli;
-    private readonly XNamespace _xbrldi = settings.XmlNamespaces.Xbrldi;
-
-    private record QueryDescriptor(string Name, string XPath);
-
-    private QueryDescriptor[] GetQueries() =>
-    [
-        new("Контексты с периодом instant = \"2019-04-30\"", settings.XPathQueries.ContextsWithInstant),
-        new("Контексты со сценарием dimension=\"dim-int:ID_sobstv_CZBTaxis\"", settings.XPathQueries.ContextsWithDimension),
-        new("Контексты без сценария", settings.XPathQueries.ContextsWithoutScenario)
-    ];
-
     /// <summary>
-    /// Выполняет все настроенные XPath запросы к XBRL файлу
+    /// Выполняет запросы как C# фильтры на уже распарсенном Instance.
+    /// O(n) по контекстам, 0 аллокаций DOM.
     /// </summary>
-    /// <param name="filePath">Путь к XBRL файлу</param>
-    public void ExecuteQueries(string filePath)
+    public void ExecuteQueriesOnInstance(Instance instance)
     {
-        var doc = XDocument.Load(filePath);
-        var navigator = doc.CreateNavigator();
+        // Query 1: контексты с instant = "2019-04-30"
+        var instantDate = new DateTime(2019, 4, 30);
+        var instantResults = instance.Contexts
+            .Where(c => c.PeriodInstant == instantDate)
+            .Select(c => c.Id)
+            .ToList();
 
-        var manager = new System.Xml.XmlNamespaceManager(navigator.NameTable);
-        manager.AddNamespace("xbrli", _xbrli.NamespaceName);
-        manager.AddNamespace("xbrldi", _xbrldi.NamespaceName);
-        manager.AddNamespace("dim-int", settings.XmlNamespaces.DimInt);
+        Console.WriteLine("1. Контексты с периодом instant = \"2019-04-30\":");
+        foreach (var id in instantResults)
+            Console.WriteLine($"  - {id}");
+        Console.WriteLine($"Найдено: {instantResults.Count}\n");
 
-        Console.WriteLine("\n=== XPath Запросы ===\n");
+        // Query 2: контексты со сценарием dimension="dim-int:ID_sobstv_CZBTaxis"
+        const string targetDimension = "dim-int:ID_sobstv_CZBTaxis";
+        var dimensionResults = instance.Contexts
+            .Where(c => c.Scenarios.Any(s =>
+                s.DimensionType == DimensionType.TypedMember &&
+                s.DimensionName == targetDimension))
+            .Select(c => c.Id)
+            .ToList();
 
-        var queries = GetQueries();
-        for (var i = 0; i < queries.Length; i++)
-        {
-            var query = queries[i];
-            Console.WriteLine($"{i + 1}. {query.Name}:");
-            Console.WriteLine($"XPath: {query.XPath}");
+        Console.WriteLine("2. Контексты со сценарием dimension=\"dim-int:ID_sobstv_CZBTaxis\":");
+        foreach (var id in dimensionResults)
+            Console.WriteLine($"  - {id}");
+        Console.WriteLine($"Найдено: {dimensionResults.Count}\n");
 
-            var results = navigator.Select(query.XPath, manager);
-            var count = 0;
-            foreach (XPathNavigator result in results)
-            {
-                Console.WriteLine($"  - {result.Value}");
-                count++;
-            }
-            Console.WriteLine($"Найдено: {count}\n");
-        }
-    }
+        // Query 3: контексты без сценария
+        var noScenarioResults = instance.Contexts
+            .Where(c => c.Scenarios.Count == 0)
+            .Select(c => c.Id)
+            .ToList();
 
-    /// <summary>
-    /// Выводит список всех настроенных XPath запросов в консоль
-    /// </summary>
-    public void PrintAllQueries()
-    {
-        Console.WriteLine("\n=== Список XPath запросов ===\n");
-
-        var queries = GetQueries();
-        for (var i = 0; i < queries.Length; i++)
-        {
-            var query = queries[i];
-            Console.WriteLine($"{i + 1}. {query.Name}:");
-            Console.WriteLine($"   {query.XPath}");
-            Console.WriteLine();
-        }
+        Console.WriteLine("3. Контексты без сценария:");
+        foreach (var id in noScenarioResults)
+            Console.WriteLine($"  - {id}");
+        Console.WriteLine($"Найдено: {noScenarioResults.Count}\n");
     }
 }
