@@ -1,0 +1,58 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/25.0.2 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="25.0.2">
+  <diagram id="channel-pipeline" name="Channel Pipeline (Step 10)">
+    <mxGraphModel dx="1243" dy="715" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Channel&lt;T&gt; Pipeline — Producer/Consumer Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="200" y="20" width="500" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="files" value="XBRL Files&#xa;(Reports/*.xbrl)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;strokeColor=#333333;fillColor=#dae8fc;fontSize=10;" parent="1" vertex="1">
+          <mxGeometry x="40" y="110" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="producer" value="PRODUCER&#xa;(I/O bound)&#xa;&#xa;XbrlStreamingParser&#xa;XmlReader → Instance" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#82b366;fillColor=#d5e8d4;fontSize=10;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="220" y="100" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="channel" value="Channel&lt;(Path, Instance)&gt;&#xa;&#xa;BoundedCapacity = parallelism+1&#xa;Backpressure: Wait" style="shape=process;whiteSpace=wrap;html=1;strokeColor=#d6b656;fillColor=#fff2cc;fontSize=10;fontColor=#333333;size=0.08;" parent="1" vertex="1">
+          <mxGeometry x="440" y="100" width="210" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="consumer" value="CONSUMER(s)&#xa;(CPU bound)&#xa;&#xa;× N tasks (parallelism)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#b85450;fillColor=#f8cecc;fontSize=10;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="700" y="100" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" value="read" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=9;" parent="1" source="files" target="producer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="WriteAsync" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=9;" parent="1" source="producer" target="channel" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="ReadAllAsync" style="endArrow=classic;html=1;strokeColor=#333333;fontSize=9;" parent="1" source="channel" target="consumer" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="task1" value="1. FindDuplicates&#xa;(XbrlAnalyzer)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="720" y="270" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="task2" value="2. MergeAccumulator.Add&#xa;(dedup ctx/unit/fact)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="720" y="340" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="task3" value="3. GlobalIndexAccumulator.Add&#xa;(cross-file index)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="720" y="410" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="task4" value="4. XPathQueries&#xa;(C# filters)" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=none;fontSize=9;fontColor=#333333;" parent="1" vertex="1">
+          <mxGeometry x="720" y="480" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ac1" value="" style="endArrow=classic;html=1;strokeColor=#333333;" parent="1" source="consumer" target="task1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ac2" value="" style="endArrow=classic;html=1;strokeColor=#aaaaaa;" parent="1" source="task1" target="task2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ac3" value="" style="endArrow=classic;html=1;strokeColor=#aaaaaa;" parent="1" source="task2" target="task3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ac4" value="" style="endArrow=classic;html=1;strokeColor=#aaaaaa;" parent="1" source="task3" target="task4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
