@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>XbrlProcessor.Benchmarks.PipelineBenchmarks-20260203-200958</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.8, Windows 11 (10.0.26100.7623/24H2/2024Update/HudsonValley)
+12th Gen Intel Core i7-12650H 2.70GHz, 1 CPU, 16 logical and 10 physical cores
+.NET SDK 9.0.200
+  [Host]     : .NET 9.0.2 (9.0.2, 9.0.225.6610), X64 RyuJIT x86-64-v3
+  Job-OYOULF : .NET 9.0.2 (9.0.2, 9.0.225.6610), X64 RyuJIT x86-64-v3
+</code></pre>
+<pre><code>Runtime=.NET 9.0  IterationCount=3  WarmupCount=1  
+</code></pre>
+
+<table>
+<thead><tr><th>Method                      </th><th>parallelism</th><th>Mean       </th><th>Error       </th><th>StdDev     </th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>FindDuplicates_Small</td><td>?</td><td>17,669.75 ns</td><td>9,190.792 ns</td><td>503.778 ns</td><td>0.000</td><td>0.00</td><td>1.6174</td><td>0.0610</td><td>-</td><td>20464 B</td><td>0.000</td>
+</tr><tr><td>FindDuplicates_Medium</td><td>?</td><td>197,630.55 ns</td><td>45,271.476 ns</td><td>2,481.482 ns</td><td>0.000</td><td>0.00</td><td>15.6250</td><td>3.4180</td><td>-</td><td>197080 B</td><td>0.004</td>
+</tr><tr><td>FindDuplicates_Large</td><td>?</td><td>4,927,029.95 ns</td><td>1,147,396.541 ns</td><td>62,892.676 ns</td><td>0.010</td><td>0.00</td><td>148.4375</td><td>70.3125</td><td>-</td><td>2060176 B</td><td>0.038</td>
+</tr><tr><td>Merge_Small</td><td>?</td><td>75,749.09 ns</td><td>43,109.794 ns</td><td>2,362.993 ns</td><td>0.000</td><td>0.00</td><td>8.4229</td><td>0.9766</td><td>-</td><td>106072 B</td><td>0.002</td>
+</tr><tr><td>Merge_Medium</td><td>?</td><td>3,626,298.44 ns</td><td>6,456,093.557 ns</td><td>353,880.274 ns</td><td>0.008</td><td>0.00</td><td>50.7813</td><td>3.9063</td><td>3.9063</td><td>2769737 B</td><td>0.051</td>
+</tr><tr><td>GlobalCompare_Small</td><td>?</td><td>292,338.66 ns</td><td>53,692.697 ns</td><td>2,943.078 ns</td><td>0.001</td><td>0.00</td><td>11.7188</td><td>1.4648</td><td>-</td><td>149432 B</td><td>0.003</td>
+</tr><tr><td>GlobalCompare_Medium</td><td>?</td><td>10,382,701.04 ns</td><td>2,815,073.195 ns</td><td>154,303.661 ns</td><td>0.022</td><td>0.00</td><td>156.2500</td><td>93.7500</td><td>-</td><td>1981680 B</td><td>0.036</td>
+</tr><tr><td>ContextSignature_Single</td><td>?</td><td>15.68 ns</td><td>4.049 ns</td><td>0.222 ns</td><td>0.000</td><td>0.00</td><td>0.0070</td><td>-</td><td>-</td><td>88 B</td><td>0.000</td>
+</tr><tr><td>ContextSignature_All_Medium</td><td>?</td><td>18,329.19 ns</td><td>5,086.373 ns</td><td>278.801 ns</td><td>0.000</td><td>0.00</td><td>6.9885</td><td>-</td><td>-</td><td>88040 B</td><td>0.002</td>
+</tr><tr><td>GlobalIndex_SingleThreaded_Large</td><td>?</td><td>474,517,033.33 ns</td><td>276,552,736.411 ns</td><td>15,158,788.729 ns</td><td>1.001</td><td>0.04</td><td>3000.0000</td><td>2000.0000</td><td>-</td><td>54364984 B</td><td>1.000</td>
+</tr><tr><td>Merge_Concurrent_Parallel_Large</td><td>?</td><td>95,129,183.33 ns</td><td>27,538,503.100 ns</td><td>1,509,478.286 ns</td><td>0.201</td><td>0.01</td><td>2333.3333</td><td>1333.3333</td><td>-</td><td>34043640 B</td><td>0.626</td>
+</tr><tr><td>Merge_SingleThreaded_Large</td><td>?</td><td>197,231,344.44 ns</td><td>305,795,324.060 ns</td><td>16,761,673.640 ns</td><td>0.416</td><td>0.03</td><td>1333.3333</td><td>-</td><td>-</td><td>31771952 B</td><td>0.584</td>
+</tr><tr><td>GlobalIndex_Sharded_Parallel_Large</td><td>2</td><td>508,701,900.00 ns</td><td>92,047,405.182 ns</td><td>5,045,428.899 ns</td><td>?</td><td>?</td><td>3000.0000</td><td>2000.0000</td><td>-</td><td>54264512 B</td><td>?</td>
+</tr><tr><td>GlobalIndex_Sharded_Parallel_Large</td><td>4</td><td>347,376,533.33 ns</td><td>233,930,514.182 ns</td><td>12,822,520.897 ns</td><td>?</td><td>?</td><td>3000.0000</td><td>1000.0000</td><td>-</td><td>54207184 B</td><td>?</td>
+</tr><tr><td>GlobalIndex_Sharded_Parallel_Large</td><td>8</td><td>313,200,900.00 ns</td><td>98,363,476.211 ns</td><td>5,391,634.066 ns</td><td>?</td><td>?</td><td>3500.0000</td><td>1500.0000</td><td>-</td><td>54145600 B</td><td>?</td>
+</tr></tbody></table>
+</body>
+</html>
