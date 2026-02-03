@@ -16,8 +16,9 @@ public enum XbrlValueType
 /// <summary>
 /// Типизированное значение XBRL факта.
 /// Хранит исходную строку для сериализации и распарсенное значение для семантического сравнения.
+/// readonly record struct — инлайнится в Fact, без отдельной аллокации на хипе.
 /// </summary>
-public sealed class XbrlValue : IEquatable<XbrlValue>
+public readonly record struct XbrlValue : IEquatable<XbrlValue>
 {
     /// <summary>Исходное строковое значение из XML</summary>
     public string RawValue { get; }
@@ -70,9 +71,8 @@ public sealed class XbrlValue : IEquatable<XbrlValue>
     /// <summary>
     /// Семантическое сравнение: "1000.00" == "1000" для числовых значений
     /// </summary>
-    public bool SemanticallyEquals(XbrlValue? other)
+    public bool SemanticallyEquals(XbrlValue other)
     {
-        if (other is null) return false;
         if (Type != other.Type) return false;
 
         return Type switch
@@ -84,9 +84,7 @@ public sealed class XbrlValue : IEquatable<XbrlValue>
         };
     }
 
-    public bool Equals(XbrlValue? other) => SemanticallyEquals(other);
-
-    public override bool Equals(object? obj) => obj is XbrlValue other && SemanticallyEquals(other);
+    public bool Equals(XbrlValue other) => SemanticallyEquals(other);
 
     public override int GetHashCode()
     {
@@ -98,11 +96,6 @@ public sealed class XbrlValue : IEquatable<XbrlValue>
             _ => HashCode.Combine(Type, RawValue)
         };
     }
-
-    public static bool operator ==(XbrlValue? left, XbrlValue? right) =>
-        left is null ? right is null : left.Equals(right);
-
-    public static bool operator !=(XbrlValue? left, XbrlValue? right) => !(left == right);
 
     /// <summary>Возвращает исходную строку для сериализации в XML</summary>
     public override string ToString() => RawValue;

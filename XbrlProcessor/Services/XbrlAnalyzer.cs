@@ -37,7 +37,7 @@ public class XbrlAnalyzer(XbrlSettings settings)
     /// <param name="reports">Список (имя файла, экземпляр)</param>
     public GlobalComparisonResult BuildGlobalIndex(IReadOnlyList<(string Name, Instance Instance)> reports)
     {
-        var index = new Dictionary<string, Dictionary<string, Fact>>();
+        var index = new Dictionary<CrossFileFactKey, Dictionary<string, Fact>>();
 
         foreach (var (name, instance) in reports)
         {
@@ -48,7 +48,7 @@ public class XbrlAnalyzer(XbrlSettings settings)
 
             foreach (var fact in instance.Facts)
             {
-                var key = GetCrossFileFactKey(fact, contextSignatures);
+                var key = GlobalIndexAccumulator.MakeCrossFileFactKey(fact, contextSignatures);
                 if (!index.TryGetValue(key, out var fileMap))
                 {
                     fileMap = new Dictionary<string, Fact>();
@@ -65,7 +65,7 @@ public class XbrlAnalyzer(XbrlSettings settings)
 
         foreach (var (key, fileMap) in index)
         {
-            var entry = new FactIndexEntry { FactKey = key, ValuesByFile = fileMap };
+            var entry = new FactIndexEntry { FactKey = key.ToString(), ValuesByFile = fileMap };
 
             if (entry.FileCount < totalFiles)
                 partial.Add(entry);
@@ -83,19 +83,5 @@ public class XbrlAnalyzer(XbrlSettings settings)
             ModifiedFacts = modified,
             PartialFacts = partial
         };
-    }
-
-    /// <summary>
-    /// Ключ факта для кросс-файлового сравнения (ConceptName|ContextSignature).
-    /// ConceptName — имя XML-элемента (концепт таксономии), одинаковый для одного показателя во всех файлах.
-    /// ContextSignature — семантическая сигнатура контекста (entity+period+scenario), а не ID.
-    /// </summary>
-    private static string GetCrossFileFactKey(Fact fact, Dictionary<string, string> contextSignatures)
-    {
-        var conceptName = fact.ConceptName ?? fact.Id;
-        var contextSig = fact.ContextRef != null && contextSignatures.TryGetValue(fact.ContextRef, out var sig)
-            ? sig
-            : fact.ContextRef ?? "";
-        return $"{conceptName}|{contextSig}";
     }
 }
